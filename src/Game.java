@@ -1,0 +1,259 @@
+/*
+ * Copyright 2022 Mingchun Zhuang (http://me.mczhuang.cn)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.THE
+ * SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+/**
+ * The {@code Game} class manages a game window that enables user to play the game and shows the result window after
+ * the game ends.
+ *
+ * <p>
+ * Multiple instances of this class may be instantiated for various settings of preferred word length of the word to be
+ * guessed. But only one instance will exist or be held by {@link Game#instance} at any time.
+ *
+ * @author Mingchun Zhuang
+ * @version 1.0
+ */
+public class Game {
+    /**
+     * A static variable storing the most recent instance instantiated, where older ones will be eligible for garbage
+     * collection.
+     */
+    private static Game instance;
+
+    /**
+     * A static constant holding the width of current window.
+     */
+    private static final int WINDOW_WIDTH = 600;
+
+    /**
+     * A static constant holding the height of current window.
+     */
+    private static final int WINDOW_HEIGHT = 850;
+
+    /**
+     * A static constant holding the width of each content box.
+     */
+    private static final int CONTENT_WIDTH = 500;
+
+    /**
+     * A static constant holding the height of each content box.
+     */
+    private static final int CONTENT_HEIGHT = 100;
+
+    /**
+     * A static constant holding the interval size of contents of current window.
+     */
+    private static final int CONTENT_MARGIN = 50;
+
+    /**
+     * A static constant holding the size ratio of cell size to cell interval size current window.
+     */
+    private static final int sizeRatio = 8;
+
+    /**
+     * A {@code JFrame} holding the instance of current window.
+     */
+    private JFrame window;
+
+    /**
+     * A {@code ArrayList} holding the instances of {@code JTextField} that displays guessed letters typed by the user.
+     */
+    private ArrayList<JTextField> fields;
+
+    /**
+     * A {@code JTextField} holding the instance of {@code JTextField} that displays hint messages.
+     */
+    private JTextField messageBoard;
+
+    /**
+     * A String holding the word in the current line.
+     */
+    private String currentWord;
+
+    /**
+     * An int holding current line number that counts from zero.
+     */
+    private int currentLine;
+
+    /**
+     * A {@code HashSet} holding characters existed in the initial word to be guessed.
+     */
+    private HashSet<Character> existChar;
+
+    /**
+     * This method launches the game window with settings given.
+     *
+     * @param wordSource a String describing the specific source type, included in <var>wordSourceOption</var>.
+     * @param initWord   a String holding the word to be guessed.
+     */
+    public void playGame(String wordSource, String initWord) {
+        // Initialize related variables.
+        int wordLength = initWord.length();
+        this.existChar = new HashSet<>();
+        for (int i = 0; i < wordLength; i++)
+            existChar.add(initWord.charAt(i));
+        this.currentLine = 0;
+        this.currentWord = "";
+        this.fields = new ArrayList<>();
+
+        // Configure window.
+        window = new JFrame("Wordle");
+        window.setLocationRelativeTo(null);
+        window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        window.setFocusable(true);
+        window.setFocusTraversalKeysEnabled(false);
+        window.setBackground(Color.WHITE);
+        window.setLayout(null);
+        window.setResizable(false);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Add message board to the window.
+        messageBoard = Settings.textInit("", "Comic Sans MS", JTextField.CENTER, Font.BOLD,
+                CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_WIDTH, CONTENT_HEIGHT, 20, false,
+                false);
+        messageBoard.setForeground(Color.RED);
+        messageBoard.setFocusable(false);
+        window.add(messageBoard);
+
+        // Add text fields that display letter typed by the user. The number of lines of text fields is wordLength+1
+        final int blockMarginSizeHorizon = (WINDOW_WIDTH - CONTENT_MARGIN * 2) / ((sizeRatio + 1) * wordLength - 1);
+        final int blockMarginSizeVertical =
+                (WINDOW_HEIGHT - CONTENT_MARGIN * 3 - CONTENT_HEIGHT) / ((sizeRatio + 1) * (wordLength + 1) - 1);
+        final int smallMarginSize = Math.min(blockMarginSizeHorizon, blockMarginSizeVertical);
+        final int blockSize = smallMarginSize * sizeRatio;
+        for (int row = 0; row <= wordLength; row++)
+            for (int column = 0; column < wordLength; column++) {
+                int x = CONTENT_MARGIN + column * smallMarginSize * (sizeRatio + 1);
+                int y = CONTENT_MARGIN * 2 + CONTENT_HEIGHT + row * smallMarginSize * (sizeRatio + 1);
+                JTextField field = Settings.textInit("", "", JTextField.CENTER, Font.BOLD, x, y,
+                        blockSize, blockSize, 30, true, false);
+                field.setFocusable(false);
+                fields.add(field);
+                window.add(field);
+            }
+
+        this.addKeyboardListener(initWord, wordSource);
+
+        window.setVisible(true);
+    }
+
+    /**
+     * Returns a new instance of current class, where the older copy of this class, if exists, will be eligible for
+     * garbage collection.
+     *
+     * @return a new instance of current class.
+     */
+    public static Game createInstance() {
+        Game.instance = new Game();
+        return Game.instance;
+    }
+
+    /**
+     * This static method modifies foreground and background colors of given {@code JTextField} respectively.
+     *
+     * @param field      a {@code JTextField} to be modified.
+     * @param foreground a {@code Color} holding the color of the preferred foreground.
+     * @param background a {@code Color} holding the color of the preferred background.
+     */
+    public static void setColor(JTextField field, Color foreground, Color background) {
+        field.setForeground(foreground);
+        field.setBackground(background);
+    }
+
+    /**
+     * This method adds a keyboard listener to current window.
+     *
+     * @param wordSource a String describing the specific source type, included in <var>wordSourceOption</var>.
+     * @param initWord   a String holding the word to be guessed.
+     */
+    private void addKeyboardListener(String initWord, String wordSource) {
+        int wordLength = initWord.length();
+        window.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                messageBoard.setText("");
+                // All possible letters will be converted to uppercase.
+                char c = Character.toUpperCase(e.getKeyChar());
+                // Typed enter.
+                if (c == '\n') {
+                    if (currentWord.length() == wordLength) {
+                        // Word guessed correct.
+                        if (currentWord.equals(initWord)) {
+                            Results.getInstance().showResults(initWord, currentLine + 1, true);
+                            window.dispose();
+                        }
+                        // Word guessed exists in word source of current difficulty but incorrect.
+                        else if (Service.getInstance().checkExistence(currentWord, wordSource).length() == 0) {
+                            for (int i = 0; i < wordLength; i++) {
+                                if (currentWord.charAt(i) == initWord.charAt(i))
+                                    setColor(fields.get(currentLine * wordLength + i), Color.white,
+                                            new Color(121, 167, 107));
+                                else if (existChar.contains(currentWord.charAt(i)))
+                                    setColor(fields.get(currentLine * wordLength + i), Color.white,
+                                            new Color(198, 180, 102));
+                                else
+                                    setColor(fields.get(currentLine * wordLength + i), Color.white,
+                                            new Color(121, 124, 126));
+                            }
+                            currentWord = "";
+                            // Maximum guess tries reached.
+                            if (++currentLine > wordLength) {
+                                Results.getInstance().showResults(initWord, currentLine, false);
+                                window.dispose();
+                            }
+                        } else
+                            messageBoard.setText("Not in word list");
+                    } else
+                        messageBoard.setText("Not enough length");
+                }
+                // Typed letters.
+                else if ('A' <= c && c <= 'Z') {
+                    if (currentWord.length() < wordLength) {
+                        JTextField field = fields.get(currentLine * wordLength + currentWord.length());
+                        setColor(field, Color.black, Color.white);
+                        field.setText("" + c);
+                        currentWord += c;
+                    } else
+                        messageBoard.setText("Time to click enter to confirm");
+                }
+                // Typed backspace.
+                else if (c == '\b') {
+                    if (currentWord.length() > 0) {
+                        JTextField field = fields.get(currentLine * wordLength + currentWord.length() - 1);
+                        field.setText("");
+                        setColor(field, Color.black, Color.white);
+                        currentWord = currentWord.substring(0, currentWord.length() - 1);
+                    } else
+                        messageBoard.setText("No more letters to delete");
+                }
+                // Illegal input.
+                else
+                    messageBoard.setText("Only letters will be accepted");
+            }
+        });
+    }
+}
