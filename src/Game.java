@@ -100,11 +100,6 @@ public class Game {
     private int currentLine;
 
     /**
-     * A {@code HashSet} holding characters existed in the initial word to be guessed.
-     */
-    private HashSet<Character> existChar;
-
-    /**
      * This method launches the game window with settings given.
      *
      * @param wordSource a String describing the specific source type, included in <var>wordSourceOption</var>.
@@ -113,12 +108,9 @@ public class Game {
     public void playGame(String wordSource, String initWord) {
         // Initialize related variables.
         int wordLength = initWord.length();
-        this.existChar = new HashSet<>();
-        for (int i = 0; i < wordLength; i++)
-            existChar.add(initWord.charAt(i));
-        this.currentLine = 0;
-        this.currentWord = "";
-        this.fields = new ArrayList<>();
+        currentLine = 0;
+        currentWord = "";
+        fields = new ArrayList<>();
 
         // Configure window.
         window = new JFrame("Wordle");
@@ -204,21 +196,26 @@ public class Game {
                         // Word guessed correct.
                         if (currentWord.equals(initWord)) {
                             Results.getInstance().showResults(initWord, currentLine + 1, true);
+                            instance = null;
                             window.dispose();
                         }
-                        // Word guessed exists in word source of current difficulty but incorrect.
+                        // Word guessed exists in word source of current difficulty level but incorrect.
                         else if (Service.getInstance().checkExistence(currentWord, wordSource).length() == 0) {
-                            for (int i = 0; i < wordLength; i++) {
+                            HashSet<Character> charRemainIncorrect = new HashSet<>();
+                            for (int i = 0; i < wordLength; i++)
                                 if (currentWord.charAt(i) == initWord.charAt(i))
                                     setColor(fields.get(currentLine * wordLength + i), Color.white,
                                             new Color(121, 167, 107));
-                                else if (existChar.contains(currentWord.charAt(i)))
-                                    setColor(fields.get(currentLine * wordLength + i), Color.white,
-                                            new Color(198, 180, 102));
                                 else
-                                    setColor(fields.get(currentLine * wordLength + i), Color.white,
+                                    charRemainIncorrect.add(initWord.charAt(i));
+                            for (int i = 0; i < wordLength; i++)
+                                if (currentWord.charAt(i) != initWord.charAt(i)) {
+                                    if (charRemainIncorrect.contains(currentWord.charAt(i)))
+                                        setColor(fields.get(currentLine * wordLength + i), Color.white,
+                                                new Color(198, 180, 102));
+                                    else setColor(fields.get(currentLine * wordLength + i), Color.white,
                                             new Color(121, 124, 126));
-                            }
+                                }
                             currentWord = "";
                             // Maximum guess tries reached.
                             if (++currentLine > wordLength) {

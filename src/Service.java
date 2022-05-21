@@ -81,7 +81,8 @@ public class Service {
         try {
             /* Word source file location may vary due to different running methods including running as a project or as
             a single file. */
-            String FilePath = (new File("Sources.csv").exists() ? "" : "./src/") + "Sources.csv";
+            String FilePath = (new File("./Word Sources/Trimmed.csv").exists() ? "./Word Sources/" :
+                    "./src/Word Sources/") + "Trimmed.csv";
             FileReader fileReader = new FileReader(FilePath);
             BufferedReader bufReader = new BufferedReader(fileReader);
             for (String curLine = bufReader.readLine(); curLine != null; curLine = bufReader.readLine()) {

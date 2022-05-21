@@ -44,13 +44,14 @@ public class eWordle {
     /**
      * A constant String array that lists word source options ordered by difficulty.
      */
-    private static final String[] wordSources = new String[]{"CET-4", "CET-6", "TOEFL", "GRE", "Oxford Dictionary"};
+    private static final String[] wordSources = new String[]{"CET-4", "CET-6", "TOEFL", "GRE", "Oxford Dictionary",
+            "All"};
 
     /**
      * This method launches the <var>setting</var> window with default setting and initialize <var>service</var>.
      */
     public static void main(String[] args) {
-        Settings.getInstance().configSettings(5, "GRE", wordLengths, wordSources);
+        Settings.getInstance().configSettings(5, "All", wordLengths, wordSources);
         String initResult = Service.getInstance().initService(wordSources, wordLengths);
         if (initResult.length() > 0) {
             System.out.println("Error while initialization:" + initResult);
