@@ -13,27 +13,27 @@ An extended version of [Wordle](http://nytimes.com/games/wordle) (Mini Project o
 
 ### Complie & Run
 
+Please make sure you have configured Java environment correctly.
+
 ```shell
 cd ./src
 javac eWordle.java && java eWordle
 ```
 ### Preference
 
-Please make sure you have configured Java environment correctly.
++ #### Word Source or Difficulty
 
-#### Word Source or Difficulty
+    > There are 6 word sources or difficulties options offered: CET-4, CET-6, TOEFL, GRE, Oxford Dictionary, and All.
 
-There are 6 word sources or difficulties options offered: CET-4, CET-6, TOEFL, GRE, Oxford Dictionary, and All.
++ #### Word Length
 
-#### Word Length
+    > There are 4 options about the word length you later guess available: 5, 6, 7, and 8.
 
-There are 4 options about the word length you later guess available: 5, 6, 7, and 8.
++ #### Wordle Word 
 
-#### Wordle Word Preference
-
-If you would like to prepare this game for others, you can configure the word to be guessed later here. Otherwise, just leave it empty to make system to generate a random word for you to guess.
-
-Hint: the word selected or generated will be shown in the command line after the game starts.
+    > If you would like to prepare this game for others, you can configure the word to be guessed later here. Otherwise, just leave it empty to make system to generate a random word for you to guess.
+    > 
+    > Hint: the word selected or generated will be shown in the command line after the game starts.
 
 ### Play
 
