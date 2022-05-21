@@ -1,4 +1,4 @@
-# eWordle<a href="https://github.com/mczhuang/eWordle"> <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="3%"></a>
+# eWordle<a href="https://github.com/mczhuang/eWordle"> <img src="https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg" width="3%"></a>
 An extended version of [Wordle](http://nytimes.com/games/wordle) (Mini Project of EBU4201 - INTRODUCTORY JAVA PROGRAMMING).
 ## Quick Start
 
