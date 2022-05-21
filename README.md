@@ -1,10 +1,10 @@
 # eWordle<a href="https://github.com/mczhuang/eWordle"> <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="3%"></a>
-An extended version of a classic word game Wordle (Mini Project of EBU4201 - INTRODUCTORY JAVA PROGRAMMING).
+An extended version of [Wordle](http://nytimes.com/games/wordle) (Mini Project of EBU4201 - INTRODUCTORY JAVA PROGRAMMING).
 ## Quick Start
 
 ### How to Play
 
-+ Guess the Wordle word in tries available just one more than the word length you selected.
++ Guess the Wordle word in tries just one more than the word length you selected.
 + Each guess must be a valid word with the length you selected.
 + For each letter you confirm to enter, It will show:
     + Green if it is in the word and in the correct spot.
