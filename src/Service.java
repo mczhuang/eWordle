@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 /**
- * The {@code Service} class loads words from {@code Sources.csv} and stores indexes of those words, providing all the
+ * The {@code Service} class loads words from {@code Trimmed.csv} and stores indexes of those words, providing all the
  * functionalities related to word sources.
  *
  * @author Mingchun Zhuang

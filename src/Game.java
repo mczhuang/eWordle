@@ -107,8 +107,9 @@ public class Game {
     /**
      * This method launches the game window with settings given.
      *
-     * @param wordSource a String describing the specific source type, included in <var>wordSourceOption</var>.
-     * @param initWord   a String holding the word to be guessed.
+     * @param wordSource    a String describing the specific source type, included in <var>wordSourceOption</var>.
+     * @param initWord      a String holding the word to be guessed.
+     * @param hashtag       a String holding the hashtag of this game.
      */
     public void playGame(String wordSource, String initWord, String hashtag) {
         System.out.println("playing Game from word source " + wordSource + " with init word " + initWord + " " + hashtag);
