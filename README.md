@@ -39,6 +39,6 @@ javac eWordle.java && java eWordle
 
 Choose an ideal configuration as shown above and click Start to enjoy eWordle!
 
-## Future Features
+### Share with hashtag
 
-A hashtag will be supported in the upcoming future, where you can enjoy competing with others in the same configuration and the same Wordle word.
+To compete with your friends in the same configuration, even the same random word, share your hashtag in the game. 
