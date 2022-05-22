@@ -140,11 +140,12 @@ public class Game {
         JTextField wordSourceBoard = Settings.textInit("Current Word Source:" + wordSource,
                 "Comic Sans MS", JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, CONTENT_MARGIN/2,
                 CONTENT_WIDTH, CONTENT_MARGIN, 15, false, false);
+        wordSourceBoard.setFocusable(false);
         window.add(wordSourceBoard);
 
         // Add message board to the window.
         messageBoard = Settings.textInit("", "Comic Sans MS", JTextField.CENTER, Font.BOLD,
-                CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_WIDTH, CONTENT_HEIGHT, 30, false,
+                CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_WIDTH, CONTENT_HEIGHT, 20, false,
                 false);
         messageBoard.setForeground(Color.RED);
         messageBoard.setFocusable(false);
