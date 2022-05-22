@@ -105,7 +105,8 @@ public class Game {
      * @param wordSource a String describing the specific source type, included in <var>wordSourceOption</var>.
      * @param initWord   a String holding the word to be guessed.
      */
-    public void playGame(String wordSource, String initWord) {
+    public void playGame(String wordSource, String initWord, String hashtag) {
+        System.out.println("playing Game from word source "+wordSource+" with init word "+initWord+" "+hashtag);
         // Initialize related variables.
         int wordLength = initWord.length();
         currentLine = 0;
@@ -122,6 +123,12 @@ public class Game {
         window.setLayout(null);
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //Add hashtag board to the current window.
+        JTextField hashtagBoard = Settings.textInit("Hashtag:" + hashtag, "Comic Sans MS", JTextField.CENTER, Font.BOLD,
+                CONTENT_MARGIN, 0, CONTENT_WIDTH, CONTENT_MARGIN, 10, false,
+                false);
+        window.add(hashtagBoard);
 
         // Add message board to the window.
         messageBoard = Settings.textInit("", "Comic Sans MS", JTextField.CENTER, Font.BOLD,
@@ -148,7 +155,8 @@ public class Game {
                 window.add(field);
             }
 
-        this.addKeyboardListener(initWord, wordSource);
+        window.addKeyListener(newKeyboardListener(initWord, wordSource));
+        hashtagBoard.addKeyListener(newKeyboardListener(initWord, wordSource));
 
         window.setVisible(true);
     }
@@ -177,14 +185,15 @@ public class Game {
     }
 
     /**
-     * This method adds a keyboard listener to current window.
+     * This method returns a new keyboard listener.
      *
      * @param wordSource a String describing the specific source type, included in <var>wordSourceOption</var>.
      * @param initWord   a String holding the word to be guessed.
+     * @return a {@code KeyAdapter} processing keyboard inputs.
      */
-    private void addKeyboardListener(String initWord, String wordSource) {
+    private KeyAdapter newKeyboardListener(String initWord, String wordSource) {
         int wordLength = initWord.length();
-        window.addKeyListener(new KeyAdapter() {
+        return new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
                 messageBoard.setText("");
@@ -249,8 +258,8 @@ public class Game {
                 }
                 // Illegal input.
                 else
-                    messageBoard.setText("Only letters will be accepted");
+                    messageBoard.setText("Only alphabetic letters will be accepted");
             }
-        });
+        };
     }
 }

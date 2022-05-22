@@ -118,6 +118,10 @@ public class Service {
      * If the returning String is empty, the word given is valid. Otherwise, the
      * returning String will contain error details.
      *
+     * <p>
+     * If the word entered is empty, the return will also be empty as it's a representation of a random word from the
+     * word source.
+     *
      * @param word       an uppercase String to be checked in the difficulty level of <var>wordSource</var>.
      * @param wordSource a String representing the difficulty level of current setting.
      * @return a string representation of checking results.

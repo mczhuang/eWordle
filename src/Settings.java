@@ -23,6 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.math.BigInteger;
 import java.util.function.Consumer;
 
 /**
@@ -85,19 +86,29 @@ public class Settings {
     private static JTextField errorMessageField;
 
     /**
-     * A static int holding the word length selected by the user,
+     * A static int holding the word length selected by the user.
      */
     private static int wordLength;
 
     /**
-     * A static String holding the word source selected by the user,
+     * A static String holding the word source selected by the user.
      */
     private static String wordSource;
 
     /**
-     * A static String holding the preferred initial word typed by the user,
+     * A static String holding the preferred initial word typed by the user.
      */
     private static String initWord;
+
+    /**
+     * A static String array holding all word sources available.
+     */
+    private static String[] wordSourceOptions;
+
+    /**
+     * A static String holding current hashtag.
+     */
+    private static String currentHashtag;
 
     /**
      * This method configs the setting window at the very beginning and should be called before being set visible.
@@ -112,6 +123,7 @@ public class Settings {
         Settings.instance = this;
         Settings.wordLength = wordLength;
         Settings.wordSource = wordSource;
+        Settings.wordSourceOptions = wordSourceOptions;
 
         // Configure window settings.
         window = new JFrame("Welcome - Wordle");
@@ -140,7 +152,7 @@ public class Settings {
         };
         // Add two combos.
         int currentHeight = BREAK_HEIGHT + CONTENT_HEIGHT;
-        window.add(Settings.textInit("Word Length Preference", "", JTextField.LEFT, Font.PLAIN,
+        window.add(Settings.textInit("Word Length", "", JTextField.LEFT, Font.PLAIN,
                 WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 30, false,
                 false));
         initCombo("Word Length: ", wordLengthOptions, currentHeight + BREAK_HEIGHT, comboEventConsumer,
@@ -148,7 +160,7 @@ public class Settings {
                 wordLength + "");
 
         currentHeight += BREAK_HEIGHT + CONTENT_HEIGHT;
-        window.add(Settings.textInit("Word Source Preference", "", JTextField.LEFT, Font.PLAIN,
+        window.add(Settings.textInit("Word Source", "", JTextField.LEFT, Font.PLAIN,
                 WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 30, false,
                 false));
         initCombo("Word Source: ", wordSourceOptions, currentHeight + BREAK_HEIGHT, comboEventConsumer,
@@ -156,7 +168,7 @@ public class Settings {
 
         // Add text field for the user to enter preferred Wordle word.
         currentHeight += BREAK_HEIGHT + CONTENT_HEIGHT;
-        window.add(Settings.textInit("Wordle Word Preference", "", JTextField.LEFT, Font.PLAIN,
+        window.add(Settings.textInit("Wordle Word or Hashtag", "", JTextField.LEFT, Font.PLAIN,
                 WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 30, false,
                 false));
         initWordField = Settings.textInit("", "", JTextField.LEFT, Font.PLAIN, WIDTH_MARGIN,
@@ -164,7 +176,7 @@ public class Settings {
                 true);
         window.add(initWordField);
         currentHeight += BREAK_HEIGHT + CONTENT_HEIGHT / 3;
-        window.add(Settings.textInit("Hint: Leave empty to guess a random word", "", JTextField.LEFT,
+        window.add(Settings.textInit("Hint: Leave empty to guess a random word.", "", JTextField.LEFT,
                 Font.PLAIN, WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 15, false,
                 false));
 
@@ -210,6 +222,15 @@ public class Settings {
      */
     public static String getInitWord() {
         return Settings.initWord;
+    }
+
+    /**
+     * Returns current hashtag.
+     *
+     * @return a String describing current hashtag.
+     */
+    public static String getCurrentHashtag() {
+        return Settings.currentHashtag;
     }
 
     /**
@@ -302,20 +323,36 @@ public class Settings {
      * check is passed. Otherwise, this method will display error message in the <var>errorMessageField</var>
      */
     private void start() {
-        String text = initWordField.getText();
-        if (text.length() == wordLength || text.length() == 0) {
-            // All internal letters are stored and processed in uppercase.
-            text = text.toUpperCase();
+        // All internal letters are stored and processed in uppercase.
+        String text = initWordField.getText().toUpperCase();
+        // Hashtag handler
+        if (text.length() > 0 && text.charAt(0) == '#') {
+            String[] decodeResult = Settings.hashtagDecoder(text).split("\\$");
+            if (decodeResult[0].length() != 0) {
+                errorMessageField.setText(decodeResult[0]);
+                return;
+            }
+            errorMessageField.setText("");
+            this.setVisibleStatus(false);
+            Settings.initWord = decodeResult[1];
+            currentHashtag = text;
+            Game.createInstance().playGame(Settings.wordSourceOptions[Integer.parseInt(decodeResult[2]) - 1],
+                    decodeResult[1], currentHashtag);
+        }
+        // Not hashtag
+        else if (text.length() == wordLength || text.length() == 0) {
             String checkResult = Service.getInstance().checkExistence(text, wordSource);
             if (checkResult.length() == 0) {
-                if (text.length() == 0)
+                if (text.length() == 0) {
                     text = Service.getInstance().generateRandomWord(wordLength, wordSource);
+                    initWordField.setText(text);
+                }
                 if (!text.equals("Not Found")) {
-                    System.out.println("word to be guessed:" + text);
                     errorMessageField.setText("");
                     this.setVisibleStatus(false);
                     Settings.initWord = text;
-                    Game.createInstance().playGame(wordSource, text);
+                    currentHashtag = Settings.hashtagEncoder(wordSource, text);
+                    Game.createInstance().playGame(wordSource, text, currentHashtag);
                 } else
                     errorMessageField.setText(text);
             } else
@@ -323,5 +360,118 @@ public class Settings {
         } else
             errorMessageField.setText("Error: The length of Wordle Word is too " +
                     (text.length() < wordLength ? "small" : "large") + "!");
+    }
+
+    /**
+     * This static method encodes current settings and return the hashtag.
+     *
+     * <p>
+     * The hashtag is generated from three parameters: <var>hashtagWordSource</var>, <var>hashtagWord</var>, and
+     * <var>hashtagWordLength</var>(calculated from <var>hashtagWord</var>).
+     *
+     * <p>
+     * The first step is to generate a base-29 integer decoded three parameters mentioned above, where the order from
+     * the lower digit of the integer is <var>hashtagWordLength</var>, <var>hashtagWordSource</var>, and then
+     * <var>hashtagWord</var>, whose alphabetic letters are converted to integer counting from 0 to 25 inclusion. For
+     * example, when <var>hashtagWordLength=5</var>, <var>hashtagWordSource=3</var>, and <var>hashtagWord="APPLE"</var>,
+     * the integer generated equals to (29^0)*5 + (29^1)*3 + (29^2)*0 + (29^3)*15 + (29^4)*15 + (29^5)*11 + (29^6)*4 =
+     * 2615891065.
+     *
+     * <p>
+     * The second step is to convert the number system to base-36 (26+10), representing by number and alphabet letter,
+     * where number counts from 0 to 9 and alphabet letter counts from 10 to 35. For example, the sample shown above
+     * will become #179FMGP.
+     *
+     * @param hashtagWordSource a String describing the word source selected.
+     * @param hashtagWord       a String describing the Wordle word selected.
+     * @return a String describing the decoded hashtag result.
+     */
+    static private String hashtagEncoder(String hashtagWordSource, String hashtagWord) {
+//        System.out.println("Encoding:"+hashtagWordSource+" "+hashtagWord);
+        final long hashtagLetterCount = 26 + 10;
+        final long radix = 29;
+        long integer = 0;
+        for (int i = hashtagWord.length() - 1; i >= 0; i--) {
+            integer *= radix;
+            integer += hashtagWord.charAt(i) - 'A';
+        }
+        for (int i = 0; i < Settings.wordSourceOptions.length; i++)
+            // Found word source in wordSourceOptions with index to be later decoded.
+            if (Settings.wordSourceOptions[i].equals(hashtagWordSource)) {
+                // Encode hashtag word source, which counts from 1.
+                integer *= radix;
+                integer += i + 1;
+                // Encode hashtag word length.
+                integer *= radix;
+                integer += hashtagWord.length();
+                // Convert integer to base-36 hashtag representation.
+                StringBuilder reverseHashtag = new StringBuilder();
+                do {
+                    int currentDigit = (int) (integer % hashtagLetterCount);
+                    reverseHashtag.append(currentDigit < 10 ? (char) (currentDigit + (int) '0') :
+                            (char) (currentDigit - 10 + (int) 'A'));
+                    integer /= hashtagLetterCount;
+                } while (integer > 0);
+                return "#" + reverseHashtag.reverse();
+            }
+        return "Hashtag Error: word source not found";
+    }
+
+    /**
+     * This static method decodes hashtag and return the results.
+     *
+     * @param hashtag a String describing the hint to add before each content, maximum length (excluded '#') 12
+     *                supported using current decoder base on {@code long} (possible longer support under using
+     *                BigInteger but not necessary ).
+     * @return a String describing the results, whose format is "errorMessage$word$difficulty", typed
+     * "String$String$int", where the latter two will be not null when {@code errorMessage} is empty, representing
+     * successfully decoded.
+     * Note: difficulty counts from 1 to total word sources available.
+     * Sample: error: "Invalid hashtag input$$", successfully decoded: "$apple$1".
+     */
+    static private String hashtagDecoder(String hashtag) {
+        final long hashtagLetterCount = 26 + 10;
+        final long radix = 29;
+        long encoded = 0;
+        if (hashtag.length() > 13)
+            return "Invalid hashtag input: length too large$$";
+        // Decode raw base-hashtagLetterCount String to long.
+        for (int i = 1; i < hashtag.length(); i++) {
+            char ch = hashtag.charAt(i);
+            if (Character.isDigit(ch)) {
+                encoded *= hashtagLetterCount;
+                encoded += Character.digit(ch, 10);
+            } else if (Character.isAlphabetic(ch)) {
+                encoded *= hashtagLetterCount;
+                encoded += ((int) ch) - ((int) 'A') + 10;
+            } else // illegal letter
+                return "Invalid hashtag input: illegal letter$$";
+        }
+        /* Retrieve details from decoded base-radix(29) integer. */
+        // Retrieve word length.
+        long hashtagWordLength = encoded % radix;
+        encoded /= radix;
+        // Retrieve word source.
+        int hashtagWordSource = (int) (encoded % radix);
+        if (!(0 < hashtagWordSource && hashtagWordSource <= Settings.wordSourceOptions.length))
+            return "Invalid hashtag input: illegal word source option$$";
+        String hashtagWordSourceStr = Settings.wordSourceOptions[hashtagWordSource - 1];
+        encoded /= radix;
+        // Retrieve Wordle word.
+        StringBuilder hashtagWord = new StringBuilder();
+        for (int i = 0; i < hashtagWordLength; i++) {
+            long currentDigit = encoded % radix;
+            encoded /= radix;
+            if (0 <= currentDigit && currentDigit < 26)
+                hashtagWord.append((char) (currentDigit + (int) 'A'));
+            else
+                return "Invalid hashtag input: illegal word letter$$";
+        }
+        // Check decoded result in Service.
+        String hashtagCheckResult = Service.getInstance().checkExistence(hashtagWord.toString(), hashtagWordSourceStr);
+        if (hashtagCheckResult.length() == 0) {
+            return "$" + hashtagWord + "$" + hashtagWordSource;
+        }
+        return "Invalid hashtag input: " + hashtagCheckResult + "$$";
     }
 }

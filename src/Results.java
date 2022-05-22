@@ -129,17 +129,18 @@ public class Results {
         // Add two buttons to the window with event handlers respectively.
         JButton toSettings = Settings.initButton("Setting", CONTENT_MARGIN, currentHeight,
                 (CONTENT_WIDTH - CONTENT_MARGIN) / 2, CONTENT_HEIGHT, 50, event -> {
-            Settings.getInstance().setVisibleStatus(true);
-            window.setVisible(false);
-        });
+                    Settings.getInstance().setVisibleStatus(true);
+                    window.setVisible(false);
+                });
         toSettings.setToolTipText("Go back to Preferences page");
         window.add(toSettings);
         JButton toRestart = Settings.initButton("Restart",
                 CONTENT_MARGIN * 2 + (CONTENT_WIDTH - CONTENT_MARGIN) / 2, currentHeight,
                 (CONTENT_WIDTH - CONTENT_MARGIN) / 2, CONTENT_HEIGHT, 50, event -> {
-            Game.createInstance().playGame(Settings.getWordSource(), Settings.getInitWord());
-            window.setVisible(false);
-        });
+                    Game.createInstance().playGame(Settings.getWordSource(), Settings.getInitWord(),
+                            Settings.getCurrentHashtag());
+                    window.setVisible(false);
+                });
         toRestart.setToolTipText("Use current preferences with the same word");
         window.add(toRestart);
     }
