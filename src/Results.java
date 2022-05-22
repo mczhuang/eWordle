@@ -21,6 +21,11 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * The {@code Results} class manages a result window that enables user to see the result and choose whether to restart
@@ -43,7 +48,7 @@ public class Results {
     /**
      * A static constant holding the height of current window.
      */
-    private static final int WINDOW_HEIGHT = 650;
+    private static final int WINDOW_HEIGHT = 800;
 
     /**
      * A static constant holding the height of each content box.
@@ -83,11 +88,26 @@ public class Results {
     private final JTextField triesBoard;
 
     /**
+     * A static {@code JTextField} holding the tries that the user used to guess.
+     */
+    private int triesUsed;
+
+    /**
+     * An {@code ArrayList} holding score of each confirmed input, where 0 is for grey, 1 is for yellow, 2 is for green.
+     */
+    private ArrayList<Integer> scoreByOrder;
+
+    /**
+     * A boolean holding the status that whether the user win.
+     */
+    private Boolean isSuccess;
+
+    /**
      * The only constructor for class {@code Results}.
      *
      * <p>
      * This constructor will initiate the window and complete the configuration. The window is hidden and waits for
-     * calling through {@link Results#showResults(String, int, boolean)}.
+     * calling through {@link Results#showResults(String, int, boolean, ArrayList)}.
      */
     public Results() {
         Results.instance = this;
@@ -124,9 +144,9 @@ public class Results {
                 CONTENT_MARGIN, currentHeight, CONTENT_WIDTH, CONTENT_HEIGHT, 60, false,
                 false);
         window.add(triesBoard);
-        currentHeight += CONTENT_HEIGHT + CONTENT_MARGIN;
 
         // Add two buttons to the window with event handlers respectively.
+        currentHeight += CONTENT_HEIGHT + CONTENT_MARGIN;
         JButton toSettings = Settings.initButton("Setting", CONTENT_MARGIN, currentHeight,
                 (CONTENT_WIDTH - CONTENT_MARGIN) / 2, CONTENT_HEIGHT, 50, event -> {
                     Settings.getInstance().setVisibleStatus(true);
@@ -143,6 +163,35 @@ public class Results {
                 });
         toRestart.setToolTipText("Use current preferences with the same word");
         window.add(toRestart);
+
+        // Add share button with its event handler and its reminder to the window.
+        currentHeight += CONTENT_HEIGHT;
+        JTextField copiedReminder = Settings.textInit("", "Comic Sans MS", JTextField.CENTER,
+                Font.PLAIN, CONTENT_MARGIN, currentHeight, CONTENT_WIDTH, CONTENT_MARGIN, 20,
+                false, false);
+        window.add(copiedReminder);
+        currentHeight += CONTENT_MARGIN;
+        JButton shareResult = Settings.initButton("Share", CONTENT_MARGIN, currentHeight,
+                CONTENT_WIDTH, CONTENT_HEIGHT, 50, event -> {
+                    StringBuilder resultStr = new StringBuilder();
+                    resultStr.append("eWordle ").append(isSuccess ? triesUsed : "X").append("/")
+                            .append(Settings.getInitWord().length() + 1).append("\n");
+                    resultStr.append(Settings.getCurrentHashtag()).append("\n").append("\n");
+                    final int initWordLength = Settings.getInitWord().length();
+                    for (int i = 0; i < scoreByOrder.size(); i++) {
+                        int score = scoreByOrder.get(i);
+                        resultStr.append(score == 0 ? "⬛" : (score == 1 ? "\uD83D\uDFE8" : "\uD83D\uDFE9"));
+                        if (i % initWordLength + 1 == initWordLength)
+                            resultStr.append("\n");
+                    }
+                    StringSelection stringSelection = new StringSelection(resultStr.toString());
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(stringSelection, null);
+                    copiedReminder.setText("Copied to clipboard.");
+                });
+        shareResult.setToolTipText("Copy your results to clipboard.");
+        window.add(shareResult);
+
     }
 
     /**
@@ -162,18 +211,21 @@ public class Results {
     /**
      * This static method shows result window with given parameters.
      *
-     * @param initWord  a String that the user tried to guess.
-     * @param tries     an int describing the number of tries used.
-     * @param isSuccess a boolean describing the final status of the game.
+     * @param initWord     a String that the user tried to guess.
+     * @param tries        an int describing the number of tries used.
+     * @param isSuccess    a boolean describing the final status of the game.
+     * @param scoreByOrder an {@code ArrayList} holding scored typed word history.
      */
-    public void showResults(String initWord, int tries, boolean isSuccess) {
+    public void showResults(String initWord, int tries, boolean isSuccess, ArrayList<Integer> scoreByOrder) {
+        this.scoreByOrder = scoreByOrder;
+        this.isSuccess = isSuccess;
+        triesUsed = tries;
         window.setLocationRelativeTo(null);
         resultBoard.setText(isSuccess ? "Success" : "Failed");
         Game.setColor(resultBoard, isSuccess ? new Color(121, 167, 107) : new Color(121, 124, 126),
                 Color.white);
         wordBoard.setText(initWord);
         triesBoard.setText("Tries Used:" + tries);
-        window.setAlwaysOnTop(true);
         window.setVisible(true);
     }
 }

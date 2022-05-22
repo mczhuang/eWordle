@@ -126,7 +126,7 @@ public class Settings {
         Settings.wordSourceOptions = wordSourceOptions;
 
         // Configure window settings.
-        window = new JFrame("Welcome - Wordle");
+        window = new JFrame("Welcome - eWordle");
         window.setLocationRelativeTo(null);
         window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         window.setBackground(Color.WHITE);

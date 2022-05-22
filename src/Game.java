@@ -100,18 +100,24 @@ public class Game {
     private int currentLine;
 
     /**
+     * An {@code ArrayList} holding score of each confirmed input, where 0 is for grey, 1 is for yellow, 2 is for green.
+     */
+    private ArrayList<Integer> scoreByOrder;
+
+    /**
      * This method launches the game window with settings given.
      *
      * @param wordSource a String describing the specific source type, included in <var>wordSourceOption</var>.
      * @param initWord   a String holding the word to be guessed.
      */
     public void playGame(String wordSource, String initWord, String hashtag) {
-        System.out.println("playing Game from word source "+wordSource+" with init word "+initWord+" "+hashtag);
+        System.out.println("playing Game from word source " + wordSource + " with init word " + initWord + " " + hashtag);
         // Initialize related variables.
         int wordLength = initWord.length();
         currentLine = 0;
         currentWord = "";
         fields = new ArrayList<>();
+        scoreByOrder = new ArrayList<>();
 
         // Configure window.
         window = new JFrame("Wordle");
@@ -204,7 +210,10 @@ public class Game {
                     if (currentWord.length() == wordLength) {
                         // Word guessed correct.
                         if (currentWord.equals(initWord)) {
-                            Results.getInstance().showResults(initWord, currentLine + 1, true);
+                            for (int i = 0; i < initWord.length(); i++)
+                                scoreByOrder.add(2);
+                            Results.getInstance().showResults(initWord, currentLine + 1, true,
+                                    scoreByOrder);
                             instance = null;
                             window.dispose();
                         }
@@ -219,16 +228,23 @@ public class Game {
                                     charRemainIncorrect.add(initWord.charAt(i));
                             for (int i = 0; i < wordLength; i++)
                                 if (currentWord.charAt(i) != initWord.charAt(i)) {
-                                    if (charRemainIncorrect.contains(currentWord.charAt(i)))
+                                    if (charRemainIncorrect.contains(currentWord.charAt(i))) {
+                                        scoreByOrder.add(1);
                                         setColor(fields.get(currentLine * wordLength + i), Color.white,
                                                 new Color(198, 180, 102));
-                                    else setColor(fields.get(currentLine * wordLength + i), Color.white,
-                                            new Color(121, 124, 126));
+                                    }
+                                    else {
+                                        scoreByOrder.add(0);
+                                        setColor(fields.get(currentLine * wordLength + i), Color.white,
+                                                new Color(121, 124, 126));
+                                    }
                                 }
+                                else
+                                    scoreByOrder.add(2);
                             currentWord = "";
                             // Maximum guess tries reached.
                             if (++currentLine > wordLength) {
-                                Results.getInstance().showResults(initWord, currentLine, false);
+                                Results.getInstance().showResults(initWord, currentLine, false, scoreByOrder);
                                 window.dispose();
                             }
                         } else
