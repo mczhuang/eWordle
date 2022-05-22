@@ -185,7 +185,7 @@ public class Results {
                     final int initWordLength = Settings.getInitWord().length();
                     for (int i = 0; i < scoreByOrder.size(); i++) {
                         int score = scoreByOrder.get(i);
-                        resultStr.append(score == 0 ? "⬛" : (score == 1 ? "\uD83D\uDFE8" : "\uD83D\uDFE9"));
+                        resultStr.append(score == 0 ? "×" : (score == 1 ? "o" : "√"));
                         if (i % initWordLength + 1 == initWordLength)
                             resultStr.append("\n");
                     }
