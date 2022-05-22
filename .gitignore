@@ -4,6 +4,7 @@ eWordle.iml
 !**/src/main/**/out/
 !**/src/test/**/out/
 .idea/
+src/*.class
 
 ### Eclipse ###
 .apt_generated
