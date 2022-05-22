@@ -152,17 +152,18 @@ public class Game {
         window.add(messageBoard);
 
         // Add text fields that display letter typed by the user. The number of lines of text fields is wordLength+1
-        final int blockMarginSizeHorizon = (WINDOW_WIDTH - CONTENT_MARGIN * 2) / ((sizeRatio + 1) * wordLength - 1);
-        final int blockMarginSizeVertical =
-                (WINDOW_HEIGHT - CONTENT_MARGIN * 3 - CONTENT_HEIGHT) / ((sizeRatio + 1) * (wordLength + 1) - 1);
-        final int smallMarginSize = Math.min(blockMarginSizeHorizon, blockMarginSizeVertical);
-        final int blockSize = smallMarginSize * sizeRatio;
+        final double blockMarginSizeHorizon = 1.0 * (WINDOW_WIDTH - CONTENT_MARGIN * 2) /
+                ((sizeRatio + 1) * wordLength - 1);
+        final double blockMarginSizeVertical =
+                1.0 * (WINDOW_HEIGHT - CONTENT_MARGIN * 3 - CONTENT_HEIGHT) / ((sizeRatio + 1) * (wordLength + 1) - 1);
+        final double smallMarginSize = Math.min(blockMarginSizeHorizon, blockMarginSizeVertical);
+        final double blockSize = smallMarginSize * sizeRatio;
         for (int row = 0; row <= wordLength; row++)
             for (int column = 0; column < wordLength; column++) {
-                int x = CONTENT_MARGIN + column * smallMarginSize * (sizeRatio + 1);
-                int y = CONTENT_MARGIN * 2 + CONTENT_HEIGHT + row * smallMarginSize * (sizeRatio + 1);
+                int x = (int) (CONTENT_MARGIN + column * smallMarginSize * (sizeRatio + 1));
+                int y = (int) (CONTENT_MARGIN * 2 + CONTENT_HEIGHT + row * smallMarginSize * (sizeRatio + 1));
                 JTextField field = Settings.textInit("", "", JTextField.CENTER, Font.BOLD, x, y,
-                        blockSize, blockSize, 30, true, false);
+                        (int)blockSize, (int)blockSize, 30, true, false);
                 field.setFocusable(false);
                 fields.add(field);
                 window.add(field);
