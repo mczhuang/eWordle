@@ -138,7 +138,7 @@ public class Game {
 
         //Add hashtag board to the current window.
         JTextField wordSourceBoard = Settings.textInit("Current Word Source:" + wordSource,
-                "Comic Sans MS", JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, CONTENT_MARGIN/2,
+                "Comic Sans MS", JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, CONTENT_MARGIN / 2,
                 CONTENT_WIDTH, CONTENT_MARGIN, 15, false, false);
         wordSourceBoard.setFocusable(false);
         window.add(wordSourceBoard);
