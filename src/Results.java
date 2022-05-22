@@ -98,6 +98,11 @@ public class Results {
     private ArrayList<Integer> scoreByOrder;
 
     /**
+     * A {@code JTextField} holding the instance of text field that displays copy status.
+     */
+    private final JTextField copiedReminder;
+
+    /**
      * A boolean holding the status that whether the user win.
      */
     private Boolean isSuccess;
@@ -166,7 +171,7 @@ public class Results {
 
         // Add share button with its event handler and its reminder to the window.
         currentHeight += CONTENT_HEIGHT;
-        JTextField copiedReminder = Settings.textInit("", "Comic Sans MS", JTextField.CENTER,
+        copiedReminder = Settings.textInit("", "Comic Sans MS", JTextField.CENTER,
                 Font.PLAIN, CONTENT_MARGIN, currentHeight, CONTENT_WIDTH, CONTENT_MARGIN, 20,
                 false, false);
         window.add(copiedReminder);
@@ -218,6 +223,7 @@ public class Results {
      */
     public void showResults(String initWord, int tries, boolean isSuccess, ArrayList<Integer> scoreByOrder) {
         this.scoreByOrder = scoreByOrder;
+        this.copiedReminder.setText("");
         this.isSuccess = isSuccess;
         triesUsed = tries;
         window.setLocationRelativeTo(null);
