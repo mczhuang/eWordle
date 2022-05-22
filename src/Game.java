@@ -131,14 +131,20 @@ public class Game {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add hashtag board to the current window.
-        JTextField hashtagBoard = Settings.textInit("Hashtag:" + hashtag, "Comic Sans MS", JTextField.CENTER, Font.BOLD,
-                CONTENT_MARGIN, 0, CONTENT_WIDTH, CONTENT_MARGIN, 10, false,
-                false);
+        JTextField hashtagBoard = Settings.textInit("Hashtag:" + hashtag, "Comic Sans MS",
+                JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, 0, CONTENT_WIDTH, CONTENT_MARGIN, 15,
+                false, false);
         window.add(hashtagBoard);
+
+        //Add hashtag board to the current window.
+        JTextField wordSourceBoard = Settings.textInit("Current Word Source:" + wordSource,
+                "Comic Sans MS", JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, CONTENT_MARGIN/2,
+                CONTENT_WIDTH, CONTENT_MARGIN, 15, false, false);
+        window.add(wordSourceBoard);
 
         // Add message board to the window.
         messageBoard = Settings.textInit("", "Comic Sans MS", JTextField.CENTER, Font.BOLD,
-                CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_WIDTH, CONTENT_HEIGHT, 20, false,
+                CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_WIDTH, CONTENT_HEIGHT, 30, false,
                 false);
         messageBoard.setForeground(Color.RED);
         messageBoard.setFocusable(false);
@@ -232,14 +238,12 @@ public class Game {
                                         scoreByOrder.add(1);
                                         setColor(fields.get(currentLine * wordLength + i), Color.white,
                                                 new Color(198, 180, 102));
-                                    }
-                                    else {
+                                    } else {
                                         scoreByOrder.add(0);
                                         setColor(fields.get(currentLine * wordLength + i), Color.white,
                                                 new Color(121, 124, 126));
                                     }
-                                }
-                                else
+                                } else
                                     scoreByOrder.add(2);
                             currentWord = "";
                             // Maximum guess tries reached.
