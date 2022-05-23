@@ -86,6 +86,11 @@ public class Game {
     private static final int SIZE_RATIO = 8;
 
     /**
+     * A boolean holding the status that whether the user opened the helper window.
+     */
+    private boolean isOpenedHelper = false;
+
+    /**
      * A {@code JFrame} holding the instance of current window.
      */
     private JFrame window;
@@ -193,7 +198,7 @@ public class Game {
         JButton helper = Settings.initButton("?", WINDOW_WIDTH - CONTENT_MARGIN,
                 WINDOW_HEIGHT - CONTENT_MARGIN - WINDOW_TOP_BAR_HEIGHT, CONTENT_MARGIN, CONTENT_MARGIN, 25,
                 event -> createHelperWindow());
-        helper.setToolTipText("Launch Helper");
+        helper.setToolTipText("Launch Helper (a \"*\" mark will be displayed in the result)");
         window.add(helper);
 
         window.addKeyListener(newKeyboardListener(initWord, wordSource));
@@ -249,7 +254,7 @@ public class Game {
                                 scoreByOrder.add(2);
                             closeHelperWindow();
                             Results.getInstance().showResults(initWord, currentLine + 1, true,
-                                    scoreByOrder);
+                                    scoreByOrder, isOpenedHelper);
                             instance = null;
                             window.dispose();
                         }
@@ -279,7 +284,8 @@ public class Game {
                             // Maximum guess tries reached.
                             if (++currentLine > wordLength) {
                                 closeHelperWindow();
-                                Results.getInstance().showResults(initWord, currentLine, false, scoreByOrder);
+                                Results.getInstance().showResults(initWord, currentLine, false, scoreByOrder,
+                                        isOpenedHelper);
                                 window.dispose();
                             }
                         } else
@@ -328,6 +334,7 @@ public class Game {
      * This method creates a new helper window.
      */
     private void createHelperWindow() {
+        isOpenedHelper = true;
         // Configure current helper window.
         final int helperWindowWidth = 600;
         final int helperWindowHeight = 800;

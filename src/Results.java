@@ -108,11 +108,16 @@ public class Results {
     private Boolean isSuccess;
 
     /**
+     * A boolean holding the status that whether the user opened the helper window.
+     */
+    private boolean isOpenedHelper = false;
+
+    /**
      * The only constructor for class {@code Results}.
      *
      * <p>
      * This constructor will initiate the window and complete the configuration. The window is hidden and waits for
-     * calling through {@link Results#showResults(String, int, boolean, ArrayList)}.
+     * calling through {@link Results#showResults(String, int, boolean, ArrayList, boolean)}.
      */
     public Results() {
         Results.instance = this;
@@ -179,8 +184,8 @@ public class Results {
         JButton shareResult = Settings.initButton("Share", CONTENT_MARGIN, currentHeight,
                 CONTENT_WIDTH, CONTENT_HEIGHT, 50, event -> {
                     StringBuilder resultStr = new StringBuilder();
-                    resultStr.append("eWordle ").append(isSuccess ? triesUsed : "X").append("/")
-                            .append(Settings.getInitWord().length() + 1).append("\n");
+                    resultStr.append("eWordle ").append(isOpenedHelper ? "*" : "").append(isSuccess ? triesUsed : "X")
+                            .append("/").append(Settings.getInitWord().length() + 1).append("\n");
                     resultStr.append(Settings.getCurrentHashtag()).append("\n").append("\n");
                     final int initWordLength = Settings.getInitWord().length();
                     for (int i = 0; i < scoreByOrder.size(); i++) {
@@ -216,22 +221,25 @@ public class Results {
     /**
      * This static method shows result window with given parameters.
      *
-     * @param initWord     a String that the user tried to guess.
-     * @param tries        an int describing the number of tries used.
-     * @param isSuccess    a boolean describing the final status of the game.
-     * @param scoreByOrder an {@code ArrayList} holding scored typed word history.
+     * @param initWord       a String that the user tried to guess.
+     * @param tries          an int describing the number of tries used.
+     * @param isSuccess      a boolean describing the final status of the game.
+     * @param scoreByOrder   an {@code ArrayList} holding scored typed word history.
+     * @param isOpenedHelper a boolean holding the status that whether the user opened helper window.
      */
-    public void showResults(String initWord, int tries, boolean isSuccess, ArrayList<Integer> scoreByOrder) {
+    public void showResults(String initWord, int tries, boolean isSuccess, ArrayList<Integer> scoreByOrder,
+                            boolean isOpenedHelper) {
         this.scoreByOrder = scoreByOrder;
         this.copiedReminder.setText("");
         this.isSuccess = isSuccess;
+        this.isOpenedHelper = isOpenedHelper;
         triesUsed = tries;
         window.setLocationRelativeTo(null);
         resultBoard.setText(isSuccess ? "Success" : "Failed");
         Game.setColor(resultBoard, isSuccess ? new Color(121, 167, 107) : new Color(121, 124, 126),
                 Color.white);
         wordBoard.setText(initWord);
-        triesBoard.setText("Tries Used:" + tries);
+        triesBoard.setText("Tries Used:" + (isOpenedHelper ? "*" : "") + tries);
         window.setVisible(true);
     }
 }
