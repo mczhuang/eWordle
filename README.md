@@ -22,7 +22,7 @@ javac eWordle.java && java eWordle
 
 + #### Word Source or Difficulty
 
-    > There are 6 word sources or difficulties options offered: CET-4, CET-6, TOEFL, GRE, Oxford Dictionary, and All.
+    > There are 6 word sources offered: CET-4, CET-6, TOEFL, GRE, Oxford Dictionary, and All.
 
 + #### Word Length
 
