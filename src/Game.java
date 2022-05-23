@@ -20,15 +20,21 @@
  */
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
  * The {@code Game} class manages a game window that enables user to play the game and shows the result window after
  * the game ends.
+ *
+ * <p>
+ * If the user click the helper icon, the helper window will be shown. The helper window is managed by current
+ * {@code Game} instance and will be disposed when the game window closes (to show the result window).
  *
  * <p>
  * Multiple instances of this class may be instantiated for various settings of preferred word length of the word to be
@@ -70,9 +76,14 @@ public class Game {
     private static final int CONTENT_MARGIN = 50;
 
     /**
+     * A static constant holding the height of the top bar of the window.
+     */
+    private final int WINDOW_TOP_BAR_HEIGHT = 28;
+
+    /**
      * A static constant holding the size ratio of cell size to cell interval size current window.
      */
-    private static final int sizeRatio = 8;
+    private static final int SIZE_RATIO = 8;
 
     /**
      * A {@code JFrame} holding the instance of current window.
@@ -105,14 +116,25 @@ public class Game {
     private ArrayList<Integer> scoreByOrder;
 
     /**
+     * A {@code JFrame} holding the instance of helper window.
+     */
+    private JFrame helperWindow;
+
+    /**
+     * A {@code JTextField} holding the instance of {@code JTextField} that displays helper output.
+     */
+    private JTextArea helperOutput;
+
+    /**
      * This method launches the game window with settings given.
      *
-     * @param wordSource    a String describing the specific source type, included in <var>wordSourceOption</var>.
-     * @param initWord      a String holding the word to be guessed.
-     * @param hashtag       a String holding the hashtag of this game.
+     * @param wordSource a String describing the specific source type, included in <var>wordSourceOption</var>.
+     * @param initWord   a String holding the word to be guessed.
+     * @param hashtag    a String holding the hashtag of this game.
      */
     public void playGame(String wordSource, String initWord, String hashtag) {
-        System.out.println("playing Game from word source " + wordSource + " with init word " + initWord + " " + hashtag);
+        System.out.println("playing Game from word source " + wordSource + " with init word " + initWord + " " +
+                hashtag);
         // Initialize related variables.
         int wordLength = initWord.length();
         currentLine = 0;
@@ -153,22 +175,26 @@ public class Game {
         window.add(messageBoard);
 
         // Add text fields that display letter typed by the user. The number of lines of text fields is wordLength+1
-        final double blockMarginSizeHorizon = 1.0 * (WINDOW_WIDTH - CONTENT_MARGIN * 2) /
-                ((sizeRatio + 1) * wordLength - 1);
-        final double blockMarginSizeVertical =
-                1.0 * (WINDOW_HEIGHT - CONTENT_MARGIN * 3 - CONTENT_HEIGHT) / ((sizeRatio + 1) * (wordLength + 1) - 1);
-        final double smallMarginSize = Math.min(blockMarginSizeHorizon, blockMarginSizeVertical);
-        final double blockSize = smallMarginSize * sizeRatio;
+        final double smallMarginSize = 1.0 * (WINDOW_WIDTH - CONTENT_MARGIN * 2) /
+                ((SIZE_RATIO + 1) * wordLength - 1);
+        final double blockSize = smallMarginSize * SIZE_RATIO;
         for (int row = 0; row <= wordLength; row++)
             for (int column = 0; column < wordLength; column++) {
-                int x = (int) (CONTENT_MARGIN + column * smallMarginSize * (sizeRatio + 1));
-                int y = (int) (CONTENT_MARGIN * 2 + CONTENT_HEIGHT + row * smallMarginSize * (sizeRatio + 1));
+                int x = (int) (CONTENT_MARGIN + column * smallMarginSize * (SIZE_RATIO + 1));
+                int y = (int) (CONTENT_MARGIN * 2 + CONTENT_HEIGHT + row * smallMarginSize * (SIZE_RATIO + 1));
                 JTextField field = Settings.textInit("", "", JTextField.CENTER, Font.BOLD, x, y,
-                        (int)blockSize, (int)blockSize, 30, true, false);
+                        (int) blockSize, (int) blockSize, 30, true, false);
                 field.setFocusable(false);
                 fields.add(field);
                 window.add(field);
             }
+
+        // Add helper icon.
+        JButton helper = Settings.initButton("?", WINDOW_WIDTH - CONTENT_MARGIN,
+                WINDOW_HEIGHT - CONTENT_MARGIN - WINDOW_TOP_BAR_HEIGHT, CONTENT_MARGIN, CONTENT_MARGIN, 25,
+                event -> createHelperWindow());
+        helper.setToolTipText("Launch Helper");
+        window.add(helper);
 
         window.addKeyListener(newKeyboardListener(initWord, wordSource));
         hashtagBoard.addKeyListener(newKeyboardListener(initWord, wordSource));
@@ -221,6 +247,7 @@ public class Game {
                         if (currentWord.equals(initWord)) {
                             for (int i = 0; i < initWord.length(); i++)
                                 scoreByOrder.add(2);
+                            closeHelperWindow();
                             Results.getInstance().showResults(initWord, currentLine + 1, true,
                                     scoreByOrder);
                             instance = null;
@@ -251,6 +278,7 @@ public class Game {
                             currentWord = "";
                             // Maximum guess tries reached.
                             if (++currentLine > wordLength) {
+                                closeHelperWindow();
                                 Results.getInstance().showResults(initWord, currentLine, false, scoreByOrder);
                                 window.dispose();
                             }
@@ -284,5 +312,79 @@ public class Game {
                     messageBoard.setText("Only alphabetic letters will be accepted");
             }
         };
+    }
+
+    /**
+     * This method closes the helper window if exists.
+     */
+    private void closeHelperWindow() {
+        if (helperWindow != null) {
+            helperWindow.dispose();
+            helperWindow = null;
+        }
+    }
+
+    /**
+     * This method creates a new helper window.
+     */
+    private void createHelperWindow() {
+        // Configure current helper window.
+        final int helperWindowWidth = 600;
+        final int helperWindowHeight = 800;
+        helperWindow = new JFrame("Helper");
+        helperWindow.setSize(helperWindowWidth, helperWindowHeight);
+        helperWindow.setFocusable(true);
+        helperWindow.setFocusTraversalKeysEnabled(false);
+        helperWindow.setBackground(Color.WHITE);
+        helperWindow.setLayout(null);
+        helperWindow.setResizable(false);
+        helperWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        helperOutput = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(helperOutput);
+
+        // Add word source board to the helper window.
+        int currentHelperHeight = 0;
+        JTextField wordSourceBoard = Settings.textInit("Searching Word Source: " + Settings.getWordSource() +
+                        ", Word Length: " + Settings.getInitWord().length(), "Comic Sans MS",
+                JTextField.CENTER, Font.PLAIN, CONTENT_MARGIN, currentHelperHeight, CONTENT_WIDTH, CONTENT_MARGIN,
+                15, false, false);
+        wordSourceBoard.setFocusable(false);
+        helperWindow.add(wordSourceBoard);
+
+        // Add input board to the helper window.
+        currentHelperHeight += CONTENT_MARGIN;
+        JTextField inputBoard = Settings.textInit("", "", JTextField.LEFT, Font.PLAIN, CONTENT_MARGIN,
+                currentHelperHeight, CONTENT_WIDTH, CONTENT_MARGIN, 20, true, true);
+        helperWindow.add(inputBoard);
+
+        // Add search button.
+        currentHelperHeight += CONTENT_MARGIN + CONTENT_MARGIN;
+        JButton helperButton = Settings.initButton("Search", CONTENT_MARGIN,
+                currentHelperHeight, CONTENT_WIDTH, CONTENT_MARGIN, 20,
+                event -> {
+                    // Handle search.
+                    String[] response = Service.getInstance().validateHelperInput(inputBoard.getText()).
+                            split("\\$");
+                    if (response[0].length() == 0)
+                        helperOutput.setText(response[1]);
+                    else
+                        helperOutput.setText(response[0]);
+                    helperOutput.setCaretPosition(0);
+                });
+        helperButton.setToolTipText(
+                "Search candidates in current word source. GUESS Sample: *****(ESS*), G*E**(SU), *****(ESS*)[AB]");
+        helperWindow.add(helperButton);
+
+        // Add helper output text field.
+        currentHelperHeight += CONTENT_MARGIN * 2;
+        final int helperOutputHeight =
+                helperWindowHeight - WINDOW_TOP_BAR_HEIGHT - CONTENT_MARGIN - currentHelperHeight;
+        helperOutput.setEditable(false);
+        helperOutput.setOpaque(true);
+        scrollPane.setBorder(null);
+        scrollPane.setBounds(CONTENT_MARGIN, currentHelperHeight, CONTENT_WIDTH, helperOutputHeight);
+        helperWindow.add(scrollPane);
+
+        helperWindow.setVisible(true);
     }
 }

@@ -22,9 +22,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 /**
  * The {@code Service} class loads words from {@code Trimmed.csv} and stores indexes of those words, providing all the
@@ -55,6 +53,20 @@ public class Service {
      * A HashMap storing the <var>difficulty</var> of <var>wordSource</var>
      */
     private HashMap<String, Integer> difficultyByWordSource;
+
+    /**
+     * Returns an instance of current class, where only one copy of instance will exist.
+     *
+     * <p>
+     * If no instance found, a new one will be generated and stored. Otherwise, the stored one will be return.
+     *
+     * @return an instance of current class.
+     */
+    public static Service getInstance() {
+        if (Service.instance == null)
+            Service.instance = new Service();
+        return Service.instance;
+    }
 
     /**
      * Returns a string representation of initialization results.
@@ -167,16 +179,114 @@ public class Service {
     }
 
     /**
-     * Returns an instance of current class, where only one copy of instance will exist.
+     * This method returns the result of helper input checking and matched results. Word length and word source
+     * configuration is attained directly from {@code Settings}.
      *
-     * <p>
-     * If no instance found, a new one will be generated and stored. Otherwise, the stored one will be return.
-     *
-     * @return an instance of current class.
+     * @param helperInput a String describing the input from the helper input text field.
+     * @return a String containing error reason, which will be empty if no error found, and matched results. The error
+     * reason and matched results are separated by "$".
      */
-    public static Service getInstance() {
-        if (Service.instance == null)
-            Service.instance = new Service();
-        return Service.instance;
+    public String validateHelperInput(String helperInput) {
+        // Initialize variables.
+        helperInput = helperInput.toUpperCase();
+        boolean isInsideRoundBracket = false;
+        boolean isInsideSquareBracket = false;
+        boolean isContainedRoundBracket = false;
+        HashMap<Character, Integer> mustExistCount = new HashMap<>();
+        HashSet<Character> mustNotExist = new HashSet<>();
+        boolean eligibilityMatchAll = false;
+        StringBuilder patternString = new StringBuilder();
+        // Scan and check the input string.
+        for (int i = 0; i < helperInput.length(); i++) {
+            char ch = helperInput.charAt(i);
+            if (ch == '(') {
+                isContainedRoundBracket = true;
+                if (isInsideRoundBracket || isInsideSquareBracket)
+                    return "Nested Brackets Not Supported$";
+                else
+                    isInsideRoundBracket = true;
+            } else if (ch == ')') {
+                if (isInsideRoundBracket)
+                    isInsideRoundBracket = false;
+                else
+                    return "Unpair Bracket Found$";
+            } else if (ch == '[') {
+                if (isInsideSquareBracket || isInsideRoundBracket)
+                    return "Nested Brackets Not Supported$";
+                else
+                    isInsideSquareBracket = true;
+            } else if (ch == ']') {
+                if (isInsideSquareBracket)
+                    isInsideSquareBracket = false;
+                else
+                    return "Unpair Bracket Found$";
+            } else if (Character.isAlphabetic(ch)) {
+                if (isInsideRoundBracket)
+                    mustExistCount.put(ch, mustExistCount.getOrDefault(ch, 0) + 1);
+                else if (isInsideSquareBracket)
+                    mustNotExist.add(ch);
+                else
+                    patternString.append(ch);
+            } else if (ch == '*') {
+                if (isInsideRoundBracket)
+                    eligibilityMatchAll = true;
+                else if (isInsideSquareBracket)
+                    return "* Inside [] Not Allowed";
+                else
+                    patternString.append(ch);
+            } else
+                return "Illegal Input$";
+        }
+        final int initWordLength = Settings.getInitWord().length();
+        if (patternString.length() != initWordLength)
+            return "Word Length too " + (patternString.length() < initWordLength ? "small" : "large") + "$";
+        if (isInsideRoundBracket || isInsideSquareBracket)
+            return "Unpair Bracket Found$";
+        // Scan the database to filter out valid candidate words.
+        if (!isContainedRoundBracket)
+            eligibilityMatchAll = true;
+        HashMap<Integer, ArrayList<String>> wordByDifficulty = wordByLengthThenDifficulty.get(initWordLength);
+        int difficultyLevel = difficultyByWordSource.get(Settings.getWordSource());
+        StringBuilder results = new StringBuilder();
+        int candidateCount = 0;
+        for (int currentDifficulty = 1; currentDifficulty <= difficultyLevel; currentDifficulty++) {
+            ArrayList<String> currentWordList = wordByDifficulty.get(currentDifficulty);
+            for (String word : currentWordList) {
+                boolean ok = true;
+                HashMap<Character, Integer> existCount = new HashMap<>();
+                for (int i = 0; i < initWordLength; i++) {
+                    char ch = word.charAt(i);
+                    if (ch != patternString.charAt(i)) {
+                        if (patternString.charAt(i) != '*') { // Pattern not match.
+                            ok = false;
+                            break;
+                        }
+                        // Pattern string here is *.
+                        else if (mustNotExist.contains(ch)) {
+                            ok = false;
+                            break;
+                        } else if (existCount.getOrDefault(ch, 0) <
+                                mustExistCount.getOrDefault(ch, 0)) { // Check must exist condition first.
+                            existCount.put(ch, existCount.getOrDefault(ch, 0) + 1);
+                        } else if (!eligibilityMatchAll) {
+                            ok = false;
+                            break;
+                        }
+                    }
+                }
+                // Check must exist characters validity.
+                for (Map.Entry<Character, Integer> pair : mustExistCount.entrySet()) {
+                    if (existCount.getOrDefault(pair.getKey(), 0) < pair.getValue()) {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (ok) {
+                    ++candidateCount;
+                    results.append(word).append("\n");
+                }
+            }
+        }
+        return "$" + ("Found " + candidateCount + " result(s)" + (candidateCount > 0 ? ":" : ".")) + "\n" + results;
     }
 }

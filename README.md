@@ -1,6 +1,6 @@
-# eWordle<a href="https://github.com/mczhuang/eWordle"> <img src="https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg" width="3%"></a>
-An extended version of [Wordle](http://nytimes.com/games/wordle) (Mini Project of EBU4201 - INTRODUCTORY JAVA PROGRAMMING).
-## Quick Start
+## eWordle<a href="https://github.com/mczhuang/eWordle"> <img src="https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg" width="3%"></a>
+
+An extended version of [Wordle](http://nytimes.com/games/wordle) (Mini Project of EBU4201) with full-featured helper.
 
 ### How to Play
 
@@ -13,13 +13,12 @@ An extended version of [Wordle](http://nytimes.com/games/wordle) (Mini Project o
 
 ### Complie & Run
 
-Please make sure you have configured Java environment correctly.
 
 ```shell
 cd ./src
 javac eWordle.java && java eWordle
 ```
-### Preference
+### Preferences
 
 + #### Word Source or Difficulty
 
@@ -29,16 +28,22 @@ javac eWordle.java && java eWordle
 
     > There are 4 options about the word length you later guess available: 5, 6, 7, and 8.
 
-+ #### Wordle Word 
++ #### Wordle Word or Hashtag
 
-    > If you would like to prepare this game for others, you can configure the word to be guessed later here. Otherwise, just leave it empty to make system to generate a random word for you to guess.
-    > 
-    > Hint: the word selected or generated will be shown in the command line after the game starts.
+    > Enter the word to be guessed or leave empty to guess a random word.
+    >
+    > To compete with your friends in the same configuration, even the same random word, share your hashtag in the game.
+  
 
-### Play
+### Helper Guide (Launch via rounded ? icon in game) 
 
-Choose an ideal configuration as shown above and click Start to enjoy eWordle!
+Replace asterisks (*s) with known letter, add **all** filling letters inside "()" (optional) and add omitted letters inside "[]" (optional).
 
-### Share with hashtag
+```
+G*ES*           --> the places marked * are unknown.
+*****(ESS*)[AB] --> the places marked * are unknown but must contain 1*E, 2*S and more that aren't A or B.
+G*E**(SU)       --> the places marked * only contain S and U.
+```
 
-To compete with your friends in the same configuration, even the same random word, share your hashtag in the game. 
+
+ 
