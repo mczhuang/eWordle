@@ -37,7 +37,7 @@ javac eWordle.java && java eWordle
 
 ### Helper Guide (Launch via square "?" icon in game) 
 
-Replace *s with known letters.Optionally add **all** filling letters inside "()" and omitted letters inside "[]".
+Replace *s with known letters. Optionally add **all** filling letters inside "()" and omitted letters inside "[]".
 
 ```
 G*ES*           --> Places marked * are unknown.
