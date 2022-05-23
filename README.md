@@ -40,9 +40,9 @@ javac eWordle.java && java eWordle
 Replace asterisks (*s) with known letter, add **all** filling letters inside "()" (optional) and add omitted letters inside "[]" (optional).
 
 ```
-G*ES*           --> the places marked * are unknown.
-*****(ESS*)[AB] --> the places marked * are unknown but must contain 1*E, 2*S and more that aren't A or B.
-G*E**(SU)       --> the places marked * only contain S and U.
+G*ES*           --> places marked * are unknown.
+*****(ESS*)[AB] --> places marked * are unknown but contain at least 1E2S and no A or B.
+G*E**(SU)       --> places marked * only contain S and U.
 ```
 
 
