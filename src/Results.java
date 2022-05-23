@@ -24,7 +24,6 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
