@@ -154,13 +154,13 @@ public class Game {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add hashtag board to the current window.
-        JTextField hashtagBoard = Settings.textInit("Hashtag:" + hashtag, "Comic Sans MS",
+        JTextField hashtagBoard = Settings.textInit("Hashtag: " + hashtag, "Comic Sans MS",
                 JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, 0, CONTENT_WIDTH, CONTENT_MARGIN, 15,
                 false, false);
         window.add(hashtagBoard);
 
         //Add hashtag board to the current window.
-        JTextField wordSourceBoard = Settings.textInit("Current Word Source:" + wordSource,
+        JTextField wordSourceBoard = Settings.textInit("Current Word Source: " + wordSource,
                 "Comic Sans MS", JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, CONTENT_MARGIN / 2,
                 CONTENT_WIDTH, CONTENT_MARGIN, 15, false, false);
         wordSourceBoard.setFocusable(false);
