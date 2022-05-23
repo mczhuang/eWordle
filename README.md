@@ -35,9 +35,9 @@ javac eWordle.java && java eWordle
     > To compete with your friends in the cloned environment, share your hashtag shown after game starts.
   
 
-### Helper Guide (Launch via square ? icon in game) 
+### Helper Guide (Launch via square "?" icon in game) 
 
-Replace *s with known letters, add **all** filling letters inside "()" (optional) and add omitted letters inside "[]" (optional).
+Replace *s with known letters.Optionally add **all** filling letters inside "()" and omitted letters inside "[]".
 
 ```
 G*ES*           --> Places marked * are unknown.
