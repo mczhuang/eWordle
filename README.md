@@ -32,7 +32,7 @@ javac eWordle.java && java eWordle
 
     > Enter the word to be guessed or leave empty to guess a random word.
     >
-    > To compete with your friends in the cloned environment, share your hashtag in the game.
+    > To compete with your friends in the cloned environment, share your hashtag shown after game starts.
   
 
 ### Helper Guide (Launch via rounded ? icon in game) 
