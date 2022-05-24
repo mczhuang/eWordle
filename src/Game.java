@@ -84,7 +84,7 @@ public class Game {
     private boolean isOpenedHelper = false;
 
     /**
-     * A {@code JFrame} holding the instance of current wrapper window.
+     * A {@code JFrame} holding the instance of current window.
      */
     private JFrame window;
 
@@ -142,17 +142,18 @@ public class Game {
 
         // Configure window.
         window = new JFrame("eWordle");
-        JPanel windowPanel = new JPanel();
+        window.setFocusable(true);
+        window.setResizable(false);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
+        JPanel windowPanel = new JPanel();
         windowPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
+        window.add(windowPanel);
+        window.pack();
         windowPanel.setFocusable(false);
         windowPanel.setFocusTraversalKeysEnabled(false);
         windowPanel.setBackground(new Color(238, 238, 238));
         windowPanel.setLayout(null);
-
-        window.setFocusable(true);
-        window.setResizable(false);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add hashtag board to the current window panel.
         JTextField hashtagBoard = Settings.textInit("Hashtag: " + hashtag, "Comic Sans MS",
@@ -201,8 +202,6 @@ public class Game {
         window.addKeyListener(newKeyboardListener(initWord, wordSource));
         hashtagBoard.addKeyListener(newKeyboardListener(initWord, wordSource));
 
-        window.add(windowPanel);
-        window.pack();
         window.setVisible(true);
     }
 
