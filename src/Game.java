@@ -86,7 +86,7 @@ public class Game {
     /**
      * A {@code JFrame} holding the instance of current wrapper window.
      */
-    private JFrame wrapperWindow;
+    private JFrame window;
 
     /**
      * A {@code ArrayList} holding the instances of {@code JTextField} that displays guessed letters typed by the user.
@@ -141,39 +141,39 @@ public class Game {
         scoreByOrder = new ArrayList<>();
 
         // Configure window.
-        wrapperWindow = new JFrame("eWordle");
-        JPanel window = new JPanel();
-        wrapperWindow.setLocationRelativeTo(null);
-        window.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
-        window.setFocusable(false);
-        window.setFocusTraversalKeysEnabled(false);
-        window.setBackground(new Color(238, 238, 238));
-        window.setLayout(null);
+        window = new JFrame("eWordle");
+        JPanel windowPanel = new JPanel();
+        window.setLocationRelativeTo(null);
+        windowPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
+        windowPanel.setFocusable(false);
+        windowPanel.setFocusTraversalKeysEnabled(false);
+        windowPanel.setBackground(new Color(238, 238, 238));
+        windowPanel.setLayout(null);
 
-        wrapperWindow.setFocusable(true);
-        wrapperWindow.setResizable(false);
-        wrapperWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setFocusable(true);
+        window.setResizable(false);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //Add hashtag board to the current window.
+        //Add hashtag board to the current window panel.
         JTextField hashtagBoard = Settings.textInit("Hashtag: " + hashtag, "Comic Sans MS",
                 JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, 0, CONTENT_WIDTH, CONTENT_MARGIN, 15,
                 false, false);
-        window.add(hashtagBoard);
+        windowPanel.add(hashtagBoard);
 
-        //Add hashtag board to the current window.
+        //Add hashtag board to the current window panel.
         JTextField wordSourceBoard = Settings.textInit("Current Word Source: " + wordSource,
                 "Comic Sans MS", JTextField.CENTER, Font.BOLD, CONTENT_MARGIN, CONTENT_MARGIN / 2,
                 CONTENT_WIDTH, CONTENT_MARGIN, 15, false, false);
         wordSourceBoard.setFocusable(false);
-        window.add(wordSourceBoard);
+        windowPanel.add(wordSourceBoard);
 
-        // Add message board to the window.
+        // Add message board to the window panel.
         messageBoard = Settings.textInit("", "Comic Sans MS", JTextField.CENTER, Font.BOLD,
                 CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_WIDTH, CONTENT_HEIGHT, 20, false,
                 false);
         messageBoard.setForeground(Color.RED);
         messageBoard.setFocusable(false);
-        window.add(messageBoard);
+        windowPanel.add(messageBoard);
 
         // Add text fields that display letter typed by the user. The number of lines of text fields is wordLength+1
         final double smallMarginSize = 1.0 * (WINDOW_WIDTH - CONTENT_MARGIN * 2) /
@@ -188,7 +188,7 @@ public class Game {
                 field.setBackground(Color.WHITE);
                 field.setFocusable(false);
                 fields.add(field);
-                window.add(field);
+                windowPanel.add(field);
             }
 
         // Add helper icon.
@@ -196,15 +196,14 @@ public class Game {
                 WINDOW_HEIGHT - CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN, 25,
                 event -> createHelperWindow());
         helper.setToolTipText("Launch Helper (a \"*\" mark will be displayed in the result)");
-        window.add(helper);
+        windowPanel.add(helper);
 
-        wrapperWindow.addKeyListener(newKeyboardListener(initWord, wordSource));
+        window.addKeyListener(newKeyboardListener(initWord, wordSource));
         hashtagBoard.addKeyListener(newKeyboardListener(initWord, wordSource));
 
+        window.add(windowPanel);
+        window.pack();
         window.setVisible(true);
-        wrapperWindow.add(window);
-        wrapperWindow.pack();
-        wrapperWindow.setVisible(true);
     }
 
     /**
@@ -256,7 +255,7 @@ public class Game {
                             Results.getInstance().showResults(initWord, currentLine + 1, true,
                                     scoreByOrder, isOpenedHelper);
                             instance = null;
-                            wrapperWindow.dispose();
+                            window.dispose();
                         }
                         // Word guessed exists in word source of current difficulty level but incorrect.
                         else if (Service.getInstance().checkExistence(currentWord, wordSource).length() == 0) {
@@ -286,7 +285,7 @@ public class Game {
                                 closeHelperWindow();
                                 Results.getInstance().showResults(initWord, currentLine, false, scoreByOrder,
                                         isOpenedHelper);
-                                wrapperWindow.dispose();
+                                window.dispose();
                             }
                         } else
                             messageBoard.setText("Not in word list");
@@ -339,11 +338,13 @@ public class Game {
         final int helperWindowWidth = 600;
         final int helperWindowHeight = 800;
         helperWindow = new JFrame("Helper");
-        helperWindow.setSize(helperWindowWidth, helperWindowHeight);
+        JPanel helperWindowPanel = new JPanel();
+        helperWindowPanel.setPreferredSize(new Dimension(helperWindowWidth, helperWindowHeight));
         helperWindow.setFocusable(true);
-        helperWindow.setFocusTraversalKeysEnabled(false);
-        helperWindow.setBackground(Color.WHITE);
-        helperWindow.setLayout(null);
+        helperWindowPanel.setFocusable(false);
+        helperWindowPanel.setFocusTraversalKeysEnabled(false);
+        helperWindowPanel.setBackground(new Color(238, 238, 238));
+        helperWindowPanel.setLayout(null);
         helperWindow.setResizable(false);
         helperWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         helperOutput = new JTextArea();
@@ -356,13 +357,13 @@ public class Game {
                 JTextField.CENTER, Font.PLAIN, CONTENT_MARGIN, currentHelperHeight, CONTENT_WIDTH, CONTENT_MARGIN,
                 15, false, false);
         wordSourceBoard.setFocusable(false);
-        helperWindow.add(wordSourceBoard);
+        helperWindowPanel.add(wordSourceBoard);
 
         // Add input board to the helper window.
         currentHelperHeight += CONTENT_MARGIN;
         JTextField inputBoard = Settings.textInit("", "", JTextField.LEFT, Font.PLAIN, CONTENT_MARGIN,
                 currentHelperHeight, CONTENT_WIDTH, CONTENT_MARGIN, 20, true, true);
-        helperWindow.add(inputBoard);
+        helperWindowPanel.add(inputBoard);
 
         // Add search button.
         currentHelperHeight += CONTENT_MARGIN + CONTENT_MARGIN;
@@ -380,7 +381,7 @@ public class Game {
                 });
         helperButton.setToolTipText(
                 "Search candidates in current word source. GUESS Sample: *****(ESS*), G*E**(SU), *****(ESS*)[AB]");
-        helperWindow.add(helperButton);
+        helperWindowPanel.add(helperButton);
 
         // Add helper output text field.
         currentHelperHeight += CONTENT_MARGIN * 2;
@@ -390,8 +391,10 @@ public class Game {
         helperOutput.setOpaque(true);
         scrollPane.setBorder(null);
         scrollPane.setBounds(CONTENT_MARGIN, currentHelperHeight, CONTENT_WIDTH, helperOutputHeight);
-        helperWindow.add(scrollPane);
+        helperWindowPanel.add(scrollPane);
 
+        helperWindow.add(helperWindowPanel);
+        helperWindow.pack();
         helperWindow.setVisible(true);
     }
 }
