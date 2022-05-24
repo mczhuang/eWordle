@@ -231,7 +231,7 @@ public class Service {
                 if (isInsideRoundBracket)
                     eligibilityMatchAll = true;
                 else if (isInsideSquareBracket)
-                    return "* Inside [] Not Allowed";
+                    return "* Inside [] Not Allowed$";
                 else
                     patternString.append(ch);
             } else
