@@ -88,7 +88,6 @@ public class Service {
         indexByLength = new HashMap<>();
         wordByLengthThenDifficulty = new HashMap<>();
 
-
         /* Load words from word source. */
         try {
             /* Word source file location may vary due to different running methods including running as a project or as
