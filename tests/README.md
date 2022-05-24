@@ -1,10 +1,10 @@
-## Tests for eWordle<a href="https://github.com/mczhuang/eWordle"> <img src="https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg" width="3%"></a>
+# Tests for eWordle<a href="https://github.com/mczhuang/eWordle"> <img src="https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg" width="3%"></a>
 
 As most bugs happen in the boundary cases, most test cases are picked intentionally in the border.
 
-Apart from the boundary cases, rest test cases include default preferences and random configurations.
+Apart from the boundary cases, the rest test cases include default preferences and random configurations.
 
-### Unit Tests 
+## Unit Tests 
 
 All unit tests shown below are screenshotted, unless specified, saved in current folder.
 
@@ -42,7 +42,7 @@ All unit tests shown below are screenshotted, unless specified, saved in current
   + Restart with Word from Hashtag (Passed, No Photo)
   + Restart with Word from Input (Passed, No Photo)
 
-### Integration Tests
+## Integration Tests
 
 Each test case as shown below contains
 
