@@ -56,7 +56,7 @@ Each test case as shown below contains
   + Helper Test: Filter out the correct word using helper.
   + Color Test: Incorrect word input that make 3 colors visible.
 
-#### Boundary Cases
+### Boundary Cases
 
 + Lower bound case of Word Length: 5
   + Lower bound case of Word Source: CET-4
@@ -77,7 +77,7 @@ Each test case as shown below contains
     + Word: ABNORMAL (lower bound)
     + Word: from hashtag containing ZYZZYVAS (upper bound)
 
-#### Default Preferences
+### Default Preferences
 
 + Word Length: 5
   + Word Source: All
@@ -87,7 +87,7 @@ Each test case as shown below contains
   + Word Source: All
     + Word: from hashtag containing GUESS
 
-#### Random Configurations
+### Random Configurations
 
 + Word Length: 7
   + Word Source: Oxford Dictionary
