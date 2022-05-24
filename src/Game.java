@@ -74,7 +74,7 @@ public class Game {
     private static final int CONTENT_MARGIN = 50;
 
     /**
-     * A static constant holding the size ratio of cell size to cell interval size current window.
+     * A static constant holding the size ratio of cell size to cell interval size of current window.
      */
     private static final int SIZE_RATIO = 8;
 
