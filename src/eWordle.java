@@ -49,7 +49,8 @@ public class eWordle {
 
     /**
      * This method launches the <var>setting</var> window with default setting and initialize <var>service</var>.
-     * @param  args a default String array which is not used by this program.
+     *
+     * @param args a default String array which is not used by this program.
      */
     public static void main(String[] args) {
         Settings.getInstance().configSettings(5, "All", wordLengths, wordSources);
