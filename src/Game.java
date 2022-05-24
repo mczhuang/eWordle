@@ -74,11 +74,6 @@ public class Game {
     private static final int CONTENT_MARGIN = 50;
 
     /**
-     * A static constant holding the height of the top bar of the window.
-     */
-    private final int WINDOW_TOP_BAR_HEIGHT = 28;
-
-    /**
      * A static constant holding the size ratio of cell size to cell interval size current window.
      */
     private static final int SIZE_RATIO = 8;
@@ -89,9 +84,9 @@ public class Game {
     private boolean isOpenedHelper = false;
 
     /**
-     * A {@code JFrame} holding the instance of current window.
+     * A {@code JFrame} holding the instance of current wrapper window.
      */
-    private JFrame window;
+    private JFrame wrapperWindow;
 
     /**
      * A {@code ArrayList} holding the instances of {@code JTextField} that displays guessed letters typed by the user.
@@ -146,15 +141,18 @@ public class Game {
         scoreByOrder = new ArrayList<>();
 
         // Configure window.
-        window = new JFrame("eWordle");
-        window.setLocationRelativeTo(null);
-        window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        window.setFocusable(true);
+        wrapperWindow = new JFrame("eWordle");
+        JPanel window = new JPanel();
+        wrapperWindow.setLocationRelativeTo(null);
+        window.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
+        window.setFocusable(false);
         window.setFocusTraversalKeysEnabled(false);
-        window.setBackground(Color.WHITE);
+        window.setBackground(new Color(238, 238, 238));
         window.setLayout(null);
-        window.setResizable(false);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        wrapperWindow.setFocusable(true);
+        wrapperWindow.setResizable(false);
+        wrapperWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add hashtag board to the current window.
         JTextField hashtagBoard = Settings.textInit("Hashtag: " + hashtag, "Comic Sans MS",
@@ -195,15 +193,18 @@ public class Game {
 
         // Add helper icon.
         JButton helper = Settings.initButton("?", WINDOW_WIDTH - CONTENT_MARGIN,
-                WINDOW_HEIGHT - CONTENT_MARGIN - WINDOW_TOP_BAR_HEIGHT, CONTENT_MARGIN, CONTENT_MARGIN, 25,
+                WINDOW_HEIGHT - CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN, 25,
                 event -> createHelperWindow());
         helper.setToolTipText("Launch Helper (a \"*\" mark will be displayed in the result)");
         window.add(helper);
 
-        window.addKeyListener(newKeyboardListener(initWord, wordSource));
+        wrapperWindow.addKeyListener(newKeyboardListener(initWord, wordSource));
         hashtagBoard.addKeyListener(newKeyboardListener(initWord, wordSource));
 
         window.setVisible(true);
+        wrapperWindow.add(window);
+        wrapperWindow.pack();
+        wrapperWindow.setVisible(true);
     }
 
     /**
@@ -255,7 +256,7 @@ public class Game {
                             Results.getInstance().showResults(initWord, currentLine + 1, true,
                                     scoreByOrder, isOpenedHelper);
                             instance = null;
-                            window.dispose();
+                            wrapperWindow.dispose();
                         }
                         // Word guessed exists in word source of current difficulty level but incorrect.
                         else if (Service.getInstance().checkExistence(currentWord, wordSource).length() == 0) {
@@ -285,7 +286,7 @@ public class Game {
                                 closeHelperWindow();
                                 Results.getInstance().showResults(initWord, currentLine, false, scoreByOrder,
                                         isOpenedHelper);
-                                window.dispose();
+                                wrapperWindow.dispose();
                             }
                         } else
                             messageBoard.setText("Not in word list");
@@ -384,7 +385,7 @@ public class Game {
         // Add helper output text field.
         currentHelperHeight += CONTENT_MARGIN * 2;
         final int helperOutputHeight =
-                helperWindowHeight - WINDOW_TOP_BAR_HEIGHT - CONTENT_MARGIN - currentHelperHeight;
+                helperWindowHeight - CONTENT_MARGIN - currentHelperHeight;
         helperOutput.setEditable(false);
         helperOutput.setOpaque(true);
         scrollPane.setBorder(null);
