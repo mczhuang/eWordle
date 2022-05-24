@@ -145,7 +145,6 @@ public class Game {
         window.setFocusable(true);
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setLocationRelativeTo(null);
         JPanel windowPanel = new JPanel();
         windowPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         window.add(windowPanel);
@@ -202,6 +201,7 @@ public class Game {
         window.addKeyListener(newKeyboardListener(initWord, wordSource));
         hashtagBoard.addKeyListener(newKeyboardListener(initWord, wordSource));
 
+        window.setLocationRelativeTo(null);
         window.setVisible(true);
     }
 
