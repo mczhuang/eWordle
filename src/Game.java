@@ -146,7 +146,7 @@ public class Game {
         scoreByOrder = new ArrayList<>();
 
         // Configure window.
-        window = new JFrame("Wordle");
+        window = new JFrame("eWordle");
         window.setLocationRelativeTo(null);
         window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         window.setFocusable(true);
