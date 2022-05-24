@@ -35,7 +35,6 @@
  * @author Mingchun Zhuang
  * @version 1.0
  */
-
 public class eWordle {
     /**
      * A constant ordered String array that lists word length options.
