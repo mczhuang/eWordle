@@ -187,6 +187,7 @@ public class Game {
                 int y = (int) (CONTENT_MARGIN * 2 + CONTENT_HEIGHT + row * smallMarginSize * (SIZE_RATIO + 1));
                 JTextField field = Settings.textInit("", "", JTextField.CENTER, Font.BOLD, x, y,
                         (int) blockSize, (int) blockSize, 30, true, false);
+                field.setBackground(Color.WHITE);
                 field.setFocusable(false);
                 fields.add(field);
                 window.add(field);
