@@ -87,6 +87,11 @@ public class Results {
     private final JTextField triesBoard;
 
     /**
+     * A {@code JTextField} holding the instance of text field that displays copy status.
+     */
+    private final JTextField copiedReminder;
+
+    /**
      * A static {@code JTextField} holding the tries that the user used to guess.
      */
     private int triesUsed;
@@ -95,11 +100,6 @@ public class Results {
      * An {@code ArrayList} holding score of each confirmed input, where 0 is for grey, 1 is for yellow, 2 is for green.
      */
     private ArrayList<Integer> scoreByOrder;
-
-    /**
-     * A {@code JTextField} holding the instance of text field that displays copy status.
-     */
-    private final JTextField copiedReminder;
 
     /**
      * A boolean holding the status that whether the user win.
