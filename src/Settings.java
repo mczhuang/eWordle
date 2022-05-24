@@ -127,14 +127,17 @@ public class Settings {
         // Configure window settings.
         window = new JFrame("Welcome - eWordle");
         window.setLocationRelativeTo(null);
-        window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        window.setBackground(Color.WHITE);
-        window.setLayout(null);
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel windowPanel = new JPanel();
+        windowPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
+        window.add(windowPanel);
+        window.pack();
+        windowPanel.setBackground(new Color(238, 238, 238));
+        windowPanel.setLayout(null);
 
-        window.add(Settings.textInit("Preferences", "Comic Sans MS", JTextField.CENTER, Font.BOLD,
-                WIDTH_MARGIN, BREAK_HEIGHT, CONTENT_WIDTH, CONTENT_HEIGHT, 60, false,
+        windowPanel.add(Settings.textInit("Preferences", "Comic Sans MS", JTextField.CENTER,
+                Font.BOLD, WIDTH_MARGIN, BREAK_HEIGHT, CONTENT_WIDTH, CONTENT_HEIGHT, 60, false,
                 false));
 
         // two following Combos initialized with identical Event Consumer, which is distinguished in Consumer via char
@@ -151,44 +154,45 @@ public class Settings {
         };
         // Add two combos.
         int currentHeight = BREAK_HEIGHT + CONTENT_HEIGHT;
-        window.add(Settings.textInit("Word Length", "", JTextField.LEFT, Font.PLAIN,
+        windowPanel.add(Settings.textInit("Word Length", "", JTextField.LEFT, Font.PLAIN,
                 WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 30, false,
                 false));
-        initCombo("Word Length: ", wordLengthOptions, currentHeight + BREAK_HEIGHT, comboEventConsumer,
-                "Word Length (Default: " + wordLength + " or last round preference)",
-                wordLength + "");
+        windowPanel.add(initCombo("Word Length: ", wordLengthOptions, currentHeight + BREAK_HEIGHT,
+                comboEventConsumer, "Word Length (Default: " + wordLength + " or last round preference)",
+                wordLength + ""));
 
         currentHeight += BREAK_HEIGHT + CONTENT_HEIGHT;
-        window.add(Settings.textInit("Word Source", "", JTextField.LEFT, Font.PLAIN,
+        windowPanel.add(Settings.textInit("Word Source", "", JTextField.LEFT, Font.PLAIN,
                 WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 30, false,
                 false));
-        initCombo("Word Source: ", wordSourceOptions, currentHeight + BREAK_HEIGHT, comboEventConsumer,
-                "Word Source (Default: " + wordSource + " or last round preference)", wordSource);
+        windowPanel.add(initCombo("Word Source: ", wordSourceOptions, currentHeight + BREAK_HEIGHT,
+                comboEventConsumer, "Word Source (Default: " + wordSource + " or last round preference)",
+                wordSource));
 
         // Add text field for the user to enter preferred Wordle word.
         currentHeight += BREAK_HEIGHT + CONTENT_HEIGHT;
-        window.add(Settings.textInit("Wordle Word or Hashtag", "", JTextField.LEFT, Font.PLAIN,
+        windowPanel.add(Settings.textInit("Wordle Word or Hashtag", "", JTextField.LEFT, Font.PLAIN,
                 WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 30, false,
                 false));
         initWordField = Settings.textInit("", "", JTextField.LEFT, Font.PLAIN, WIDTH_MARGIN,
                 currentHeight + BREAK_HEIGHT, CONTENT_WIDTH, BREAK_HEIGHT, 30, true,
                 true);
-        window.add(initWordField);
+        windowPanel.add(initWordField);
         currentHeight += BREAK_HEIGHT + CONTENT_HEIGHT / 3;
-        window.add(Settings.textInit("Hint: Leave empty to guess a random word.", "", JTextField.LEFT,
-                Font.PLAIN, WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 15, false,
-                false));
+        windowPanel.add(Settings.textInit("Hint: Leave empty to guess a random word.", "",
+                JTextField.LEFT, Font.PLAIN, WIDTH_MARGIN, currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 15,
+                false, false));
 
         // Add error message field to display error message.
         currentHeight = WINDOW_HEIGHT - BREAK_HEIGHT * 2 - CONTENT_HEIGHT;
         errorMessageField = Settings.textInit("", "", JTextField.CENTER, Font.BOLD, WIDTH_MARGIN,
                 currentHeight, CONTENT_WIDTH, BREAK_HEIGHT, 15, false, false);
         errorMessageField.setForeground(Color.RED);
-        window.add(errorMessageField);
+        windowPanel.add(errorMessageField);
         currentHeight += BREAK_HEIGHT;
         JButton startButton = initButton("Start", WINDOW_WIDTH / 2 - CONTENT_WIDTH / 4, currentHeight,
                 CONTENT_WIDTH / 2, CONTENT_HEIGHT, 70, event -> start());
-        window.add(startButton);
+        windowPanel.add(startButton);
     }
 
     /**
@@ -294,7 +298,7 @@ public class Settings {
     }
 
     /**
-     * This method adds a configured combo to the window.
+     * This method returns a configured combo to the window.
      *
      * @param hint         a String describing the hint to add before each content.
      * @param contents     a String array describing contents to be displayed in the combo.
@@ -302,9 +306,10 @@ public class Settings {
      * @param consumer     a {@code Consumer<ItemEvent>} that consumes events related to the combo.
      * @param toolTip      a String describing the tooltip displayed if the mouse is placed onto the combo.
      * @param selectedItem a String describing the default selected item of the combo.
+     * @return a configured {@code JComboBox<String>}.
      */
-    private void initCombo(String hint, String[] contents, int height, Consumer<ItemEvent> consumer, String toolTip,
-                           String selectedItem) {
+    private JComboBox<String> initCombo(String hint, String[] contents, int height, Consumer<ItemEvent> consumer,
+                                        String toolTip, String selectedItem) {
         contents = contents.clone();
         for (int i = 0; i < contents.length; i++)
             contents[i] = hint + contents[i];
@@ -314,7 +319,7 @@ public class Settings {
         result.setCursor(new Cursor(Cursor.HAND_CURSOR));
         result.addItemListener(consumer::accept);
         result.setSelectedItem(hint + selectedItem);
-        window.add(result);
+        return result;
     }
 
     /**
