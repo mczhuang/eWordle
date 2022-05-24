@@ -124,35 +124,38 @@ public class Results {
         // Configure window settings.
         window = new JFrame("Results");
         window.setLocationRelativeTo(null);
-        window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        window.setBackground(Color.WHITE);
-        window.setLayout(null);
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel windowPanel = new JPanel();
+        windowPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
+        window.add(windowPanel);
+        window.pack();
+        windowPanel.setBackground(new Color(238, 238, 238));
+        windowPanel.setLayout(null);
 
         // Add result board to the window.
         int currentHeight = CONTENT_MARGIN;
         resultBoard = Settings.textInit("", "Comic Sans MS", JTextField.CENTER, Font.BOLD,
                 CONTENT_MARGIN, currentHeight, CONTENT_WIDTH, CONTENT_HEIGHT, 80, false,
                 false);
-        window.add(resultBoard);
+        windowPanel.add(resultBoard);
 
         // Add the hint board that displays "Guessing" and word board to the window.
         currentHeight += CONTENT_HEIGHT + CONTENT_MARGIN;
         JTextField hintBoard = Settings.textInit("Guessing", "Comic Sans MS", JTextField.CENTER,
                 Font.PLAIN, CONTENT_MARGIN, currentHeight - CONTENT_MARGIN / 2, CONTENT_WIDTH, CONTENT_MARGIN,
                 30, false, false);
-        window.add(hintBoard);
+        windowPanel.add(hintBoard);
         wordBoard = Settings.textInit("", "", JTextField.CENTER, Font.PLAIN, CONTENT_MARGIN,
                 currentHeight, CONTENT_WIDTH, CONTENT_HEIGHT, 60, false, false);
-        window.add(wordBoard);
+        windowPanel.add(wordBoard);
 
         // Add the tries board to the window.
         currentHeight += CONTENT_HEIGHT + CONTENT_MARGIN;
         triesBoard = Settings.textInit("", "Comic Sans MS", JTextField.CENTER, Font.PLAIN,
                 CONTENT_MARGIN, currentHeight, CONTENT_WIDTH, CONTENT_HEIGHT, 60, false,
                 false);
-        window.add(triesBoard);
+        windowPanel.add(triesBoard);
 
         // Add two buttons to the window with event handlers respectively.
         currentHeight += CONTENT_HEIGHT + CONTENT_MARGIN;
@@ -162,7 +165,7 @@ public class Results {
                     window.setVisible(false);
                 });
         toSettings.setToolTipText("Go back to Preferences page");
-        window.add(toSettings);
+        windowPanel.add(toSettings);
         JButton toRestart = Settings.initButton("Restart",
                 CONTENT_MARGIN * 2 + (CONTENT_WIDTH - CONTENT_MARGIN) / 2, currentHeight,
                 (CONTENT_WIDTH - CONTENT_MARGIN) / 2, CONTENT_HEIGHT, 50, event -> {
@@ -171,14 +174,14 @@ public class Results {
                     window.setVisible(false);
                 });
         toRestart.setToolTipText("Use current preferences with the same word");
-        window.add(toRestart);
+        windowPanel.add(toRestart);
 
         // Add share button with its event handler and its reminder to the window.
         currentHeight += CONTENT_HEIGHT;
         copiedReminder = Settings.textInit("", "Comic Sans MS", JTextField.CENTER,
                 Font.PLAIN, CONTENT_MARGIN, currentHeight, CONTENT_WIDTH, CONTENT_MARGIN, 20,
                 false, false);
-        window.add(copiedReminder);
+        windowPanel.add(copiedReminder);
         currentHeight += CONTENT_MARGIN;
         JButton shareResult = Settings.initButton("Share", CONTENT_MARGIN, currentHeight,
                 CONTENT_WIDTH, CONTENT_HEIGHT, 50, event -> {
@@ -199,7 +202,7 @@ public class Results {
                     copiedReminder.setText("Copied to clipboard.");
                 });
         shareResult.setToolTipText("Copy your results to clipboard.");
-        window.add(shareResult);
+        windowPanel.add(shareResult);
 
     }
 
