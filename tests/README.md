@@ -6,7 +6,7 @@ Apart from the boundary cases, the rest test cases include default preferences a
 
 ## Unit Tests 
 
-All unit tests shown below are screenshotted, unless specified, saved in current folder.
+All unit tests shown below are screenshotted, unless specified, saved in respective folders.
 
 + Preferences
   + Word: Shorter Input
@@ -44,7 +44,9 @@ All unit tests shown below are screenshotted, unless specified, saved in current
 
 ## Integration Tests
 
-Each test case as shown below contains
+All integration tests shown below are screenshotted, saved in respective folders.
+
+Each test case as shown below contains:
 
 + Screenshots included
 
@@ -87,7 +89,7 @@ Each test case as shown below contains
   + Word Source: All
     + Word: from hashtag containing GUESS
 
-### Random Configurations
+### Random Preferences
 
 + Word Length: 7
   + Word Source: Oxford Dictionary
