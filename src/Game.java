@@ -332,6 +332,9 @@ public class Game {
      * This method creates a new helper window.
      */
     private void createHelperWindow() {
+        // Return if already opened one.
+        if (isOpenedHelper)
+            return;
         isOpenedHelper = true;
         // Configure current helper window.
         final int helperWindowWidth = 600;
