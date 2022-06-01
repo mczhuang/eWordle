@@ -42,7 +42,7 @@ Replace *s with known letters. Optionally add **all** filling letters inside "()
 ```
 G*ES*           --> Places marked * are unknown.
 *****(ESS*)[AB] --> Places marked * are unknown but contain at least 1E2S and no A or B.
-G*E**(SU)       --> Places marked * only contain S and U.
+G*E**(SU)       --> Places marked * ONLY contain 1S1U (None Matched, Occurrences Significant).
 ```
 
 
