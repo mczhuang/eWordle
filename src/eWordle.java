@@ -39,7 +39,6 @@ public class eWordle {
     /**
      * A constant ordered String array that lists word length options.
      */
-
     private static final String[] wordLengths = new String[]{"5", "6", "7", "8"};
     /**
      * A constant String array that lists word source options ordered by difficulty.
