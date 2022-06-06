@@ -322,10 +322,8 @@ public class Game {
      * This method closes the helper window if exists.
      */
     private void closeHelperWindow() {
-        if (helperWindow != null) {
+        if (helperWindow != null)
             helperWindow.dispose();
-            helperWindow = null;
-        }
     }
 
     /**
@@ -333,7 +331,7 @@ public class Game {
      */
     private void createHelperWindow() {
         // Return if already opened one.
-        if (isOpenedHelper)
+        if (helperWindow != null)
             return;
         isOpenedHelper = true;
         // Configure current helper window.
@@ -348,6 +346,12 @@ public class Game {
         helperWindowPanel.setBackground(new Color(238, 238, 238));
         helperWindowPanel.setLayout(null);
         helperWindow.setResizable(false);
+        helperWindow.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                helperWindow = null;
+            }
+        });
         helperWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         helperOutput = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(helperOutput);

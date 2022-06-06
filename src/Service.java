@@ -80,8 +80,8 @@ public class Service {
      * @return a string representation of initialization results.
      */
     public String initService(String[] wordSources, String[] wordLengths) {
-        int minLength = Integer.parseInt(wordLengths[0]);
-        int maxLength = Integer.parseInt(wordLengths[wordLengths.length - 1]);
+        final int minLength = Integer.parseInt(wordLengths[0]);
+        final int maxLength = Integer.parseInt(wordLengths[wordLengths.length - 1]);
         difficultyByWordSource = new HashMap<>();
         for (int i = 0; i < wordSources.length; i++)
             difficultyByWordSource.put(wordSources[i], i + 1);
